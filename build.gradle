@@ -1,6 +1,7 @@
 /*
  * Copyright 2012-2015 Ray Holder
  * Modifications copyright 2017-2018 Robert Huffman
+ * Modifications copyright 2020-2021 Kiwi Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +17,15 @@
  */
 
 apply plugin: 'java'
-apply plugin: 'org.junit.platform.gradle.plugin'
 apply plugin: 'idea'
 apply plugin: 'maven'
 apply plugin: 'signing'
+apply plugin: 'com.github.ben-manes.versions'
 
-group = 'tech.huffman.re-retrying'
-version = '4.0.0-SNAPSHOT'
-sourceCompatibility = '1.8'
-targetCompatibility = '1.8'
+group = 'org.kiwiproject'
+version = '0.5.0-SNAPSHOT'
+sourceCompatibility = '11'
+targetCompatibility = '11'
 
 ext.isReleaseVersion = !version.endsWith('SNAPSHOT')
 ext.scmRevision = "git rev-parse HEAD".execute().text.trim()
@@ -33,31 +34,34 @@ repositories {
     mavenCentral()
 }
 
-ext.junit4Version        = '4.12'
-ext.junitVintageVersion  = '4.12.2'
-ext.junitPlatformVersion = '1.0.2'
-ext.junitJupiterVersion  = '5.0.2'
+ext.junit4Version        = '4.13.1'
+ext.junitVintageVersion  = '5.7.0'
+ext.junitPlatformVersion = '1.2.0'
+ext.junitJupiterVersion  = '5.7.0'
 
 dependencies {
-    compile 'com.google.guava:guava:23.0'
-    compileOnly 'com.google.code.findbugs:jsr305:2.0.2'
+    compile 'com.google.guava:guava:30.0-jre'
+    compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
 
     testCompile "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
     testCompile "org.junit.jupiter:junit-jupiter-params:${junitJupiterVersion}"
     testCompile "junit:junit:${junit4Version}"
-    testCompile 'org.mockito:mockito-all:1.9.5'
+    testCompile 'org.mockito:mockito-core:3.6.28'
 
     // To avoid compiler warning about use of experimental features in JUnit 5
-    testCompileOnly 'org.apiguardian:apiguardian-api:1.0.0'
+    testCompileOnly 'org.apiguardian:apiguardian-api:1.1.0'
 
     testRuntime "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"
     testRuntime "org.junit.vintage:junit-vintage-engine:${junitVintageVersion}"
+}
 
+test {
+    useJUnitPlatform()
 }
 
 tasks.withType(Jar) {
     manifest {
-        attributes 'Version': version
+        attributes 'Version': archiveVersion
         attributes 'Timestamp': new Date().toString()
         attributes 'SCM-Revision': scmRevision
     }
@@ -106,20 +110,20 @@ uploadArchives {
             }
 
             pom.project {
-                name 're-retrying'
+                name = 'retrying-again'
                 packaging 'jar'
                 description 'A library to create configurable retrying strategies for an arbitrary function call, such as a method that connects to a remote service with flaky uptime.'
-                url 'https://github.com/rhuffman/re-retrying'
+                url 'https://github.com/kiwiproject/retrying-again'
 
                 scm {
-                    url 'scm:git@github.com:rhuffman/re-retrying.git'
-                    connection 'scm:git@github.com:rhuffman/re-retrying.git'
-                    developerConnection 'scm:git@github.com:rhuffman/re-retrying.git'
+                    url 'scm:git@github.com:kiwiproject/retrying-again.git'
+                    connection 'scm:git@github.com:kiwiproject/retrying-again.git'
+                    developerConnection 'scm:git@github.com:kiwiproject/retrying-again.git'
                 }
 
                 licenses {
                     license {
-                        name 'The Apache Software License, Version 2.0'
+                        name = 'The Apache Software License, Version 2.0'
                         url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
                         distribution 'repo'
                     }
@@ -127,8 +131,8 @@ uploadArchives {
 
                 developers {
                     developer {
-                        id 'rhuffman'
-                        name 'Robert Huffman'
+                        id 'sleberknight'
+                        name = 'Scott Leberknight'
                     }
                 }
             }
@@ -137,7 +141,7 @@ uploadArchives {
 }
 
 wrapper {
-    gradleVersion = '4.8'
+    gradleVersion = '6.7.1'
 }
 
 String getProperty(String name, String defaultValue) {
@@ -156,8 +160,9 @@ idea {
 buildscript {
     repositories {
         mavenCentral()
+        jcenter()
     }
     dependencies {
-        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.2'
+        classpath "com.github.ben-manes:gradle-versions-plugin:0.36.0"
     }
 }
