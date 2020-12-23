@@ -1,6 +1,7 @@
 /*
  * Copyright 2012-2015 Ray Holder
  * Modifications copyright 2017-2018 Robert Huffman
+ * Modifications copyright 2020-2021 Kiwi Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +18,8 @@
 
 package com.github.rholder.retry;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
@@ -26,23 +27,23 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author Jason Dunkelberger (dirkraft)
  */
-public class AttemptTimeLimiterTest {
+class AttemptTimeLimiterTest {
 
     private final Retryer r = RetryerBuilder.newBuilder()
             .withAttemptTimeLimiter(AttemptTimeLimiters.fixedTimeLimit(1, TimeUnit.SECONDS))
             .build();
 
     @Test
-    public void testAttemptTimeLimit() throws Exception {
+    void testAttemptTimeLimit() throws Exception {
         try {
             r.call(new SleepyOut(0L));
         } catch (Exception e) {
-            Assert.fail("Should not timeout");
+            Assertions.fail("Should not timeout");
         }
 
         try {
             r.call(new SleepyOut(10 * 1000L));
-            Assert.fail("Expected timeout exception");
+            Assertions.fail("Expected timeout exception");
         } catch (RetryException ignored) {
         }
     }

@@ -1,5 +1,6 @@
 /*
  * copyright 2017-2018 Robert Huffman
+ * Modifications copyright 2020-2021 Kiwi Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +17,20 @@
 
 package com.github.rholder.retry;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.Callable;
 import java.util.stream.Stream;
-
-import static org.junit.Assert.*;
 
 class RetryerTest {
 
@@ -140,7 +145,7 @@ class RetryerTest {
   }
 
   @Test
-  void testCallThatIsInterrupted() throws Exception {
+  void testCallThatIsInterrupted() {
     Retryer retryer = RetryerBuilder.newBuilder()
             .retryIfRuntimeException()
             .withStopStrategy(StopStrategies.stopAfterAttempt(10))
@@ -150,9 +155,10 @@ class RetryerTest {
     try {
       retryer.call(thrower);
       fail("Should have thrown");
-    } catch(InterruptedException ignored) {
+    } catch (InterruptedException ignored) {
       interrupted = true;
-    } catch(Exception e) {
+    } catch (Exception e) {
+      // TODO Clean this up or remove
       System.out.println(e);
     }
 
@@ -182,12 +188,12 @@ class RetryerTest {
   }
 
   @Test
-  public void testCallWhenBlockerIsInterrupted() throws Exception {
+  void testCallWhenBlockerIsInterrupted() throws Exception {
     Retryer retryer = RetryerBuilder.newBuilder()
-        .retryIfException()
-        .withStopStrategy(StopStrategies.stopAfterAttempt(10))
-        .withBlockStrategy(new InterruptingBlockStrategy(3))
-        .build();
+            .retryIfException()
+            .withStopStrategy(StopStrategies.stopAfterAttempt(10))
+            .withBlockStrategy(new InterruptingBlockStrategy(3))
+            .build();
     Thrower thrower = new Thrower(Exception.class, 5);
     boolean interrupted = false;
     try {
@@ -202,12 +208,12 @@ class RetryerTest {
   }
 
   @Test
-  public void testRunWhenBlockerIsInterrupted() throws Exception {
+  void testRunWhenBlockerIsInterrupted() throws Exception {
     Retryer retryer = RetryerBuilder.newBuilder()
-        .retryIfException()
-        .withStopStrategy(StopStrategies.stopAfterAttempt(10))
-        .withBlockStrategy(new InterruptingBlockStrategy(3))
-        .build();
+            .retryIfException()
+            .withStopStrategy(StopStrategies.stopAfterAttempt(10))
+            .withBlockStrategy(new InterruptingBlockStrategy(3))
+            .build();
     Thrower thrower = new Thrower(Exception.class, 5);
     boolean interrupted = false;
     try {
@@ -239,7 +245,7 @@ class RetryerTest {
   /**
    * BlockStrategy that interrupts the thread
    */
-  private class InterruptingBlockStrategy implements BlockStrategy {
+  private static class InterruptingBlockStrategy implements BlockStrategy {
 
     private final int invocationToInterrupt;
 
@@ -264,7 +270,7 @@ class RetryerTest {
    * Callable that throws an exception on a specified attempt (indexed starting with 1).
    * Calls before the interrupt attempt throw an Exception.
    */
-  private class Interrupter implements Callable<Void>, Runnable {
+  private static class Interrupter implements Callable<Void>, Runnable {
 
     private final int interruptAttempt;
 
@@ -296,7 +302,7 @@ class RetryerTest {
 
   }
 
-  private class Thrower implements Callable<Void>, Runnable {
+  private static class Thrower implements Callable<Void>, Runnable {
 
     private final Class<? extends Throwable> throwableType;
 
@@ -335,8 +341,8 @@ class RetryerTest {
 
     private Throwable throwable() {
       try {
-        return throwableType.newInstance();
-      } catch (InstantiationException | IllegalAccessException e) {
+        return throwableType.getDeclaredConstructor().newInstance();
+      } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
         throw new RuntimeException("Failed to create throwable of type " + throwableType);
       }
     }

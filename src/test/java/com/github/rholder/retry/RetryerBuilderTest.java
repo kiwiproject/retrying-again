@@ -1,6 +1,7 @@
 /*
  * Copyright 2012-2015 Ray Holder
  * Modifications copyright 2017-2018 Robert Huffman
+ * Modifications copyright 2020-2021 Kiwi Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +18,15 @@
 
 package com.github.rholder.retry;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import com.github.rholder.retry.Retryer.RetryerCallable;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -30,12 +38,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.Assert.*;
-
-public class RetryerBuilderTest {
+class RetryerBuilderTest {
 
     @Test
-    public void testWithWaitStrategy() throws Exception {
+    void testWithWaitStrategy() throws Exception {
         Callable<Boolean> callable = notNullAfter5Attempts();
         Retryer retryer = RetryerBuilder.newBuilder()
                 .withWaitStrategy(WaitStrategies.fixedWait(50L, TimeUnit.MILLISECONDS))
@@ -48,7 +54,7 @@ public class RetryerBuilderTest {
     }
 
     @Test
-    public void testWithMoreThanOneWaitStrategyOneBeingFixed() throws Exception {
+    void testWithMoreThanOneWaitStrategyOneBeingFixed() throws Exception {
         Callable<Boolean> callable = notNullAfter5Attempts();
         Retryer retryer = RetryerBuilder.newBuilder()
                 .withWaitStrategy(WaitStrategies.join(
@@ -63,7 +69,7 @@ public class RetryerBuilderTest {
     }
 
     @Test
-    public void testWithMoreThanOneWaitStrategyOneBeingIncremental() throws Exception {
+    void testWithMoreThanOneWaitStrategyOneBeingIncremental() throws Exception {
         Callable<Boolean> callable = notNullAfter5Attempts();
         Retryer retryer = RetryerBuilder.newBuilder()
                 .withWaitStrategy(WaitStrategies.join(
@@ -78,11 +84,11 @@ public class RetryerBuilderTest {
     }
 
     private Callable<Boolean> notNullAfter5Attempts() {
-        return new Callable<Boolean>() {
+        return new Callable<>() {
             int counter = 0;
 
             @Override
-            public Boolean call() throws Exception {
+            public Boolean call() {
                 if (counter < 5) {
                     counter++;
                     return null;
@@ -93,7 +99,7 @@ public class RetryerBuilderTest {
     }
 
     @Test
-    public void testWithStopStrategy() throws Exception {
+    void testWithStopStrategy() throws Exception {
         Callable<Boolean> callable = notNullAfter5Attempts();
         Retryer retryer = RetryerBuilder.newBuilder()
                 .withStopStrategy(StopStrategies.stopAfterAttempt(3))
@@ -108,11 +114,14 @@ public class RetryerBuilderTest {
     }
 
     @Test
-    public void testRetryIfNotOfExceptionType() {
+    @Disabled("Empty test needs to be implemented or deleted!")
+    void testRetryIfNotOfExceptionType() {
+        // TODO Found this blank test. Delete it? Or try to determine what the orginal
+        //  author meant and implement it?
     }
 
     @Test
-    public void testWithBlockStrategy() throws Exception {
+    void testWithBlockStrategy() throws Exception {
         Callable<Boolean> callable = notNullAfter5Attempts();
         final AtomicInteger counter = new AtomicInteger();
         BlockStrategy blockStrategy = sleepTime -> counter.incrementAndGet();
@@ -128,7 +137,7 @@ public class RetryerBuilderTest {
     }
 
     @Test
-    public void testRetryIfException() throws Exception {
+    void testRetryIfException() throws Exception {
         Callable<Boolean> callable = noIOExceptionAfter5Attempts();
         Retryer retryer = RetryerBuilder.newBuilder()
                 .retryIfException()
@@ -160,11 +169,11 @@ public class RetryerBuilderTest {
     }
 
     private Callable<Boolean> noIllegalStateExceptionAfter5Attempts() {
-        return new Callable<Boolean>() {
+        return new Callable<>() {
             int counter = 0;
 
             @Override
-            public Boolean call() throws Exception {
+            public Boolean call() {
                 if (counter < 5) {
                     counter++;
                     throw new IllegalStateException();
@@ -175,7 +184,7 @@ public class RetryerBuilderTest {
     }
 
     private Callable<Boolean> noIOExceptionAfter5Attempts() {
-        return new Callable<Boolean>() {
+        return new Callable<>() {
             int counter = 0;
 
             @Override
@@ -190,7 +199,7 @@ public class RetryerBuilderTest {
     }
 
     @Test
-    public void testRetryIfRuntimeException() throws Exception {
+    void testRetryIfRuntimeException() throws Exception {
         Callable<Boolean> callable = noIOExceptionAfter5Attempts();
         Retryer retryer = RetryerBuilder.newBuilder()
                 .retryIfRuntimeException()
@@ -217,7 +226,7 @@ public class RetryerBuilderTest {
     }
 
     @Test
-    public void testRetryIfExceptionOfType() throws Exception {
+    void testRetryIfExceptionOfType() throws Exception {
         Callable<Boolean> callable = noIOExceptionAfter5Attempts();
         Retryer retryer = RetryerBuilder.newBuilder()
                 .retryIfExceptionOfType(IOException.class)
@@ -244,7 +253,7 @@ public class RetryerBuilderTest {
     }
 
     @Test
-    public void testRetryIfExceptionWithPredicate() throws Exception {
+    void testRetryIfExceptionWithPredicate() throws Exception {
         Callable<Boolean> callable = noIOExceptionAfter5Attempts();
         Retryer retryer = RetryerBuilder.newBuilder()
                 .retryIfException(t -> t instanceof IOException)
@@ -271,7 +280,7 @@ public class RetryerBuilderTest {
     }
 
     @Test
-    public void testRetryIfResult() throws Exception {
+    void testRetryIfResult() throws Exception {
         Callable<Boolean> callable = notNullAfter5Attempts();
         Retryer retryer = RetryerBuilder.newBuilder()
                 .retryIfResult(Objects::isNull)
@@ -295,7 +304,7 @@ public class RetryerBuilderTest {
     }
 
     @Test
-    public void testMultipleRetryConditions() throws Exception {
+    void testMultipleRetryConditions() throws Exception {
         Callable<Boolean> callable = notNullResultOrIOExceptionOrRuntimeExceptionAfter5Attempts();
         Retryer retryer = RetryerBuilder.newBuilder()
                 .retryIfResult(Objects::isNull)
@@ -319,7 +328,7 @@ public class RetryerBuilderTest {
     }
 
     private Callable<Boolean> notNullResultOrIOExceptionOrRuntimeExceptionAfter5Attempts() {
-        return new Callable<Boolean>() {
+        return new Callable<>() {
             int counter = 0;
 
             @Override
@@ -340,7 +349,7 @@ public class RetryerBuilderTest {
     }
 
     @Test
-    public void testInterruption() throws Exception {
+    void testInterruption() throws Exception {
         final AtomicBoolean result = new AtomicBoolean(false);
         final CountDownLatch latch = new CountDownLatch(1);
         Runnable r = () -> {
@@ -367,7 +376,7 @@ public class RetryerBuilderTest {
     }
 
     @Test
-    public void testWrap() throws Exception {
+    void testWrap() throws Exception {
         Callable<Boolean> callable = notNullAfter5Attempts();
         Retryer retryer = RetryerBuilder.newBuilder()
                 .retryIfResult(Objects::isNull)
@@ -377,19 +386,19 @@ public class RetryerBuilderTest {
     }
 
     @Test
-    public void testWhetherBuilderFailsForNullWaitStrategyWithCompositeStrategies() {
+    void testWhetherBuilderFailsForNullWaitStrategyWithCompositeStrategies() {
         try {
             RetryerBuilder.newBuilder()
                     .withWaitStrategy(WaitStrategies.join(null, null))
                     .build();
-            fail("Exepcted to fail for null wait strategy");
+            fail("Expected to fail for null wait strategy");
         } catch (IllegalStateException exception) {
             assertTrue(exception.getMessage().contains("Cannot have a null wait strategy"));
         }
     }
 
     @Test
-    public void testRetryListener_SuccessfulAttempt() throws Exception {
+    void testRetryListener_SuccessfulAttempt() throws Exception {
         final Map<Integer, Attempt> attempts = new HashMap<>();
 
         RetryListener listener = attempt -> attempts.put(attempt.getAttemptNumber(), attempt);
@@ -413,7 +422,7 @@ public class RetryerBuilderTest {
     }
 
     @Test
-    public void testRetryListener_WithException() throws Exception {
+    void testRetryListener_WithException() throws Exception {
         final Map<Integer, Attempt> attempts = new HashMap<>();
 
         RetryListener listener = attempt -> attempts.put(attempt.getAttemptNumber(), attempt);
@@ -438,7 +447,7 @@ public class RetryerBuilderTest {
     }
 
     @Test
-    public void testMultipleRetryListeners() throws Exception {
+    void testMultipleRetryListeners() throws Exception {
         Callable<Boolean> callable = () -> true;
 
         final AtomicBoolean listenerOne = new AtomicBoolean(false);

@@ -1,6 +1,7 @@
 /*
  * Copyright 2012-2015 Ray Holder
  * Modifications copyright 2017-2018 Robert Huffman
+ * Modifications copyright 2020-2021 Kiwi Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -206,8 +207,8 @@ public final class WaitStrategies {
    * {@code function} determines how the sleep time should be calculated for the given
    * {@code exceptionClass}. If the exception does not match, a wait time of 0 is returned.
    *
-   * @param function       function to calculate sleep time
    * @param exceptionClass class to calculate sleep time from
+   * @param function       function to calculate sleep time
    * @param <T>            The type of exception
    * @return a wait strategy calculated from the failed attempt
    */

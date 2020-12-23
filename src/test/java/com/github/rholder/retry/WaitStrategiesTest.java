@@ -1,6 +1,7 @@
 /*
  * Copyright 2012-2015 Ray Holder
  * Modifications copyright 2017-2018 Robert Huffman
+ * Modifications copyright 2020-2021 Kiwi Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,33 +18,32 @@
 
 package com.github.rholder.retry;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.google.common.collect.Sets;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-public class WaitStrategiesTest {
-
+class WaitStrategiesTest {
 
     @Test
-    public void testNoWait() {
+    void testNoWait() {
         WaitStrategy noWait = WaitStrategies.noWait();
         assertEquals(0L, noWait.computeSleepTime(failedAttempt(18, 9879L)));
     }
 
     @Test
-    public void testFixedWait() {
+    void testFixedWait() {
         WaitStrategy fixedWait = WaitStrategies.fixedWait(1000L, TimeUnit.MILLISECONDS);
         assertEquals(1000L, fixedWait.computeSleepTime(failedAttempt(12, 6546L)));
     }
 
     @Test
-    public void testIncrementingWait() {
+    void testIncrementingWait() {
         WaitStrategy incrementingWait = WaitStrategies.incrementingWait(500L, TimeUnit.MILLISECONDS, 100L, TimeUnit.MILLISECONDS);
         assertEquals(500L, incrementingWait.computeSleepTime(failedAttempt(1, 6546L)));
         assertEquals(600L, incrementingWait.computeSleepTime(failedAttempt(2, 6546L)));
@@ -51,7 +51,7 @@ public class WaitStrategiesTest {
     }
 
     @Test
-    public void testRandomWait() {
+    void testRandomWait() {
         WaitStrategy randomWait = WaitStrategies.randomWait(1000L, TimeUnit.MILLISECONDS, 2000L, TimeUnit.MILLISECONDS);
         Set<Long> times = Sets.newHashSet();
         times.add(randomWait.computeSleepTime(failedAttempt(1, 6546L)));
@@ -66,7 +66,7 @@ public class WaitStrategiesTest {
     }
 
     @Test
-    public void testRandomWaitWithoutMinimum() {
+    void testRandomWaitWithoutMinimum() {
         WaitStrategy randomWait = WaitStrategies.randomWait(2000L, TimeUnit.MILLISECONDS);
         Set<Long> times = Sets.newHashSet();
         times.add(randomWait.computeSleepTime(failedAttempt(1, 6546L)));
@@ -81,7 +81,7 @@ public class WaitStrategiesTest {
     }
 
     @Test
-    public void testExponential() {
+    void testExponential() {
         WaitStrategy exponentialWait = WaitStrategies.exponentialWait();
         assertTrue(exponentialWait.computeSleepTime(failedAttempt(1, 0)) == 2);
         assertTrue(exponentialWait.computeSleepTime(failedAttempt(2, 0)) == 4);
@@ -92,7 +92,7 @@ public class WaitStrategiesTest {
     }
 
     @Test
-    public void testExponentialWithMaximumWait() {
+    void testExponentialWithMaximumWait() {
         WaitStrategy exponentialWait = WaitStrategies.exponentialWait(40, TimeUnit.MILLISECONDS);
         assertTrue(exponentialWait.computeSleepTime(failedAttempt(1, 0)) == 2);
         assertTrue(exponentialWait.computeSleepTime(failedAttempt(2, 0)) == 4);
@@ -105,7 +105,7 @@ public class WaitStrategiesTest {
     }
 
     @Test
-    public void testExponentialWithMultiplierAndMaximumWait() {
+    void testExponentialWithMultiplierAndMaximumWait() {
         WaitStrategy exponentialWait = WaitStrategies.exponentialWait(1000, 50000, TimeUnit.MILLISECONDS);
         assertTrue(exponentialWait.computeSleepTime(failedAttempt(1, 0)) == 2000);
         assertTrue(exponentialWait.computeSleepTime(failedAttempt(2, 0)) == 4000);
@@ -118,7 +118,7 @@ public class WaitStrategiesTest {
     }
 
     @Test
-    public void testFibonacci() {
+    void testFibonacci() {
         WaitStrategy fibonacciWait = WaitStrategies.fibonacciWait();
         assertTrue(fibonacciWait.computeSleepTime(failedAttempt(1, 0L)) == 1L);
         assertTrue(fibonacciWait.computeSleepTime(failedAttempt(2, 0L)) == 1L);
@@ -129,7 +129,7 @@ public class WaitStrategiesTest {
     }
 
     @Test
-    public void testFibonacciWithMaximumWait() {
+    void testFibonacciWithMaximumWait() {
         WaitStrategy fibonacciWait = WaitStrategies.fibonacciWait(10L, TimeUnit.MILLISECONDS);
         assertTrue(fibonacciWait.computeSleepTime(failedAttempt(1, 0L)) == 1L);
         assertTrue(fibonacciWait.computeSleepTime(failedAttempt(2, 0L)) == 1L);
@@ -142,7 +142,7 @@ public class WaitStrategiesTest {
     }
 
     @Test
-    public void testFibonacciWithMultiplierAndMaximumWait() {
+    void testFibonacciWithMultiplierAndMaximumWait() {
         WaitStrategy fibonacciWait = WaitStrategies.fibonacciWait(1000L, 50000L, TimeUnit.MILLISECONDS);
         assertTrue(fibonacciWait.computeSleepTime(failedAttempt(1, 0L)) == 1000L);
         assertTrue(fibonacciWait.computeSleepTime(failedAttempt(2, 0L)) == 1000L);
@@ -155,7 +155,7 @@ public class WaitStrategiesTest {
     }
 
     @Test
-    public void testExceptionWait() {
+    void testExceptionWait() {
         WaitStrategy exceptionWait = WaitStrategies.exceptionWait(
                 RuntimeException.class, zeroSleepFunction());
         assertEquals(0L, exceptionWait.computeSleepTime(failedAttempt(42, 7227)));
@@ -188,11 +188,10 @@ public class WaitStrategiesTest {
         return RetryAfterException::getRetryAfter;
     }
 
-    public class RetryAfterException extends RuntimeException {
-        private final long retryAfter = 29L;
+    public static class RetryAfterException extends RuntimeException {
 
         long getRetryAfter() {
-            return retryAfter;
+            return 29L;
         }
     }
 }

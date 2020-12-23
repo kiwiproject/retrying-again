@@ -1,5 +1,6 @@
 /*
  * copyright 2017-2018 Robert Huffman
+ * Modifications copyright 2020-2021 Kiwi Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,21 +16,20 @@
  */
 package com.github.rholder.retry;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.google.common.collect.Sets;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-public class AttemptTimeLimitersTest {
+class AttemptTimeLimitersTest {
 
     @Test
-    public void testFixedTimeLimitWithNoExecutorReusesThreads() throws Exception {
+    void testFixedTimeLimitWithNoExecutorReusesThreads() throws Exception {
         Set<Long> threadsUsed = Collections.synchronizedSet(Sets.newHashSet());
         Callable<Void> callable = () -> {
             threadsUsed.add(Thread.currentThread().getId());
@@ -39,11 +39,11 @@ public class AttemptTimeLimitersTest {
         int iterations = 20;
         for (int i = 0; i < iterations; i++) {
             AttemptTimeLimiter timeLimiter =
-                AttemptTimeLimiters.fixedTimeLimit(1, TimeUnit.SECONDS);
+                    AttemptTimeLimiters.fixedTimeLimit(1, TimeUnit.SECONDS);
             timeLimiter.call(callable);
         }
-        assertTrue("Should have used less than " + iterations +
-            " threads", threadsUsed.size() < iterations);
+        assertTrue(threadsUsed.size() < iterations,
+                () -> "Should have used less than " + iterations + " threads");
     }
 
 }
