@@ -21,7 +21,9 @@
 [![License](http://img.shields.io/badge/license-apache%202-brightgreen.svg)](https://github.com/rhuffman/re-retrying/blob/master/LICENSE)
 
 ## What is this?
-**2020-12-23**: This library is a fork of [re-retrying](https://github.com/rhuffman/re-retrying), which is a fork of  [guava-retrying](https://github.com/rholder/guava-retrying). We forked it because our [kiwi](https://github.com/kiwiproject/kiwi) library has used it for years (circa 2015) and for now we intend to at least keep dependency versions up to date, and perhaps make some minimal changes and/or improvements as necessary. We make no guarantees whatsoever about anything.
+**2020-12-23**: This library is a fork of [re-retrying](https://github.com/rhuffman/re-retrying), which is a fork of  [guava-retrying](https://github.com/rholder/guava-retrying). We forked it because our [kiwi](https://github.com/kiwiproject/kiwi) library has used it for years (circa 2015) and for now we intend to at least keep dependency versions up to date, and perhaps make some minimal changes and/or improvements as necessary. We make no guarantees whatsoever about anything. 
+
+Another thing to note is that we forked re-retrying as re-retrying-fork and then _imported_ that as retrying-again, so that it is a disconnected fork. We did not want the reference to the original repository since it is no longer maintained, and therefore our fork will _never_ be pushed back to the original repository. Thus, while we maintain the history that this is a fork (of a fork), it is completely disconnected and is now a standalone (normal) repository.
 
 ---
 
