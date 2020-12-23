@@ -1,6 +1,7 @@
 <!---
   Copyright 2012-2015 Ray Holder
   Modifications copyright 2017-2018 Robert Huffman
+  Modifications copyright 2020 Kiwi Project
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -20,6 +21,10 @@
 [![License](http://img.shields.io/badge/license-apache%202-brightgreen.svg)](https://github.com/rhuffman/re-retrying/blob/master/LICENSE)
 
 ## What is this?
+**2020-12-23**: This library is a fork of [re-retrying](https://github.com/rhuffman/re-retrying), which is a fork of  [guava-retrying](https://github.com/rholder/guava-retrying). We forked it because our [kiwi](https://github.com/kiwiproject/kiwi) library has used it for years (circa 2015) and for now we intend to at least keep dependency versions up to date, and perhaps make some minimal changes and/or improvements as necessary. We make no guarantees whatsoever about anything.
+
+---
+
 The re-retrying module provides a general purpose method for retrying arbitrary Java code with specific stop, retry, and exception handling capabilities that are enhanced by Guava's predicate matching.
 
 This is a fork of the [guava-retrying](https://github.com/rholder/guava-retrying) library by Ryan Holder (rholder), which is itself a fork of the [RetryerBuilder](http://code.google.com/p/guava-libraries/issues/detail?id=490) by Jean-Baptiste Nizet (JB). The guava-retrying project added a Gradle build for pushing it up to Maven Central, and exponential and Fibonacci backoff [WaitStrategies](http://rholder.github.io/guava-retrying/javadoc/2.0.0/com/github/rholder/retry/WaitStrategies.html) that might be useful for situations where more well-behaved service polling is preferred.
