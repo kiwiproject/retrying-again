@@ -56,9 +56,9 @@ public final class WaitStrategies {
    * @param sleepTime the time to sleep
    * @param timeUnit  the unit of the time to sleep
    * @return a wait strategy that sleeps a fixed amount of time
-   * @throws IllegalStateException if the sleep time is &lt; 0
+   * @throws IllegalArgumentException if the sleep time is &lt; 0
    */
-  public static WaitStrategy fixedWait(long sleepTime, @Nonnull TimeUnit timeUnit) throws IllegalStateException {
+  public static WaitStrategy fixedWait(long sleepTime, @Nonnull TimeUnit timeUnit) {
     Preconditions.checkNotNull(timeUnit, "The time unit may not be null");
     return new FixedWaitStrategy(timeUnit.toMillis(sleepTime));
   }

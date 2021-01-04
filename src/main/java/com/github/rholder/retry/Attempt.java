@@ -92,7 +92,7 @@ public class Attempt<T> {
      * @throws IllegalStateException if the call didn't return a result, but threw an exception,
      *                               as indicated by {@link #hasResult()}
      */
-    public T getResult() throws IllegalStateException {
+    public T getResult() {
         return get();
     }
 
@@ -103,7 +103,7 @@ public class Attempt<T> {
      * @throws IllegalStateException if the call didn't throw an exception,
      *                               as indicated by {@link #hasException()}
      */
-    public Throwable getException() throws IllegalStateException {
+    public Throwable getException() {
         checkState(hasException(), "The attempt resulted in a result, not in an exception");
         return throwable;
     }

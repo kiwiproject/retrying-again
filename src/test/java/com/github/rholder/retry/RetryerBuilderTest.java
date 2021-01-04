@@ -116,7 +116,7 @@ class RetryerBuilderTest {
     @Test
     @Disabled("Empty test needs to be implemented or deleted!")
     void testRetryIfNotOfExceptionType() {
-        // TODO Found this blank test. Delete it? Or try to determine what the orginal
+        // TODO Found this blank test. Delete it? Or try to determine what the original
         //  author meant and implement it?
     }
 

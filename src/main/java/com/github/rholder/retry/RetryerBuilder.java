@@ -67,8 +67,7 @@ public class RetryerBuilder {
      * @return <code>this</code>
      * @throws IllegalStateException if a wait strategy has already been set.
      */
-    public RetryerBuilder withWaitStrategy(@Nonnull WaitStrategy waitStrategy)
-            throws IllegalStateException {
+    public RetryerBuilder withWaitStrategy(@Nonnull WaitStrategy waitStrategy) {
         Preconditions.checkNotNull(waitStrategy, "waitStrategy may not be null");
         Preconditions.checkState(this.waitStrategy == null,
                 "a wait strategy has already been set %s", this.waitStrategy);
@@ -84,8 +83,7 @@ public class RetryerBuilder {
      * @return <code>this</code>
      * @throws IllegalStateException if a stop strategy has already been set.
      */
-    public RetryerBuilder withStopStrategy(@Nonnull StopStrategy stopStrategy)
-            throws IllegalStateException {
+    public RetryerBuilder withStopStrategy(@Nonnull StopStrategy stopStrategy) {
         Preconditions.checkNotNull(stopStrategy, "stopStrategy may not be null");
         Preconditions.checkState(this.stopStrategy == null, "a stop strategy has already been set %s", this.stopStrategy);
         this.stopStrategy = stopStrategy;
@@ -99,8 +97,7 @@ public class RetryerBuilder {
      * @return <code>this</code>
      * @throws IllegalStateException if a block strategy has already been set.
      */
-    public RetryerBuilder withBlockStrategy(@Nonnull BlockStrategy blockStrategy)
-            throws IllegalStateException {
+    public RetryerBuilder withBlockStrategy(@Nonnull BlockStrategy blockStrategy) {
         Preconditions.checkNotNull(blockStrategy, "blockStrategy may not be null");
         Preconditions.checkState(this.blockStrategy == null,
                 "a block strategy has already been set %s", this.blockStrategy);
