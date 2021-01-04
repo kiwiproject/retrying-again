@@ -31,7 +31,6 @@ import java.util.function.Predicate;
  * @author JB
  * @author Jason Dunkelberger (dirkraft)
  */
-@SuppressWarnings("WeakerAccess")
 public class RetryerBuilder {
     private AttemptTimeLimiter attemptTimeLimiter;
     private StopStrategy stopStrategy;

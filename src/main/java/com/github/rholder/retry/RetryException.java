@@ -27,7 +27,6 @@ import javax.annotation.concurrent.Immutable;
  *
  * @author JB
  */
-@SuppressWarnings("WeakerAccess")
 @Immutable
 public final class RetryException extends Exception {
 

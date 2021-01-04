@@ -162,7 +162,6 @@ class RetryerTest {
       System.out.println(e);
     }
 
-    //noinspection ConstantConditions
     assertTrue(interrupted);
     assertEquals(4, thrower.invocations);
   }

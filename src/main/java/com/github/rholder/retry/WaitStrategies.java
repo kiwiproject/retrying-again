@@ -33,7 +33,6 @@ import java.util.function.Function;
  *
  * @author JB
  */
-@SuppressWarnings("WeakerAccess")
 public final class WaitStrategies {
 
   private static final WaitStrategy NO_WAIT_STRATEGY = new FixedWaitStrategy(0L);
@@ -385,7 +384,7 @@ public final class WaitStrategies {
       this.function = function;
     }
 
-    @SuppressWarnings({"ThrowableResultOfMethodCallIgnored", "ConstantConditions", "unchecked"})
+    @SuppressWarnings({"unchecked"})
     @Override
     public long computeSleepTime(Attempt lastAttempt) {
       if (lastAttempt.hasException()) {

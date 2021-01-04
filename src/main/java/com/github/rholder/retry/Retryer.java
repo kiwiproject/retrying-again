@@ -133,7 +133,6 @@ public final class Retryer {
      * @throws InterruptedException If this thread is interrupted. This can happen because
      *                              {@link Thread#sleep} is invoked between attempts
      */
-    @SuppressWarnings("WeakerAccess")
     public void run(Runnable runnable) throws RetryException, InterruptedException {
         call(() -> {
             runnable.run();
@@ -181,7 +180,6 @@ public final class Retryer {
      * @param <T>      the return type of the Callable
      * @return a {@link RetryerCallable} that behaves like the given {@link Callable} with retry behavior defined by this {@link Retryer}
      */
-    @SuppressWarnings("WeakerAccess")
     public <T> RetryerCallable<T> wrap(Callable<T> callable) {
         return new RetryerCallable<>(this, callable);
     }

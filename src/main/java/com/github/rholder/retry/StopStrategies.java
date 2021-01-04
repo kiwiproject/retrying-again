@@ -41,7 +41,6 @@ public final class StopStrategies {
      *
      * @return a stop strategy which never stops
      */
-    @SuppressWarnings("WeakerAccess")
     public static StopStrategy neverStop() {
         return NEVER_STOP;
     }
@@ -52,7 +51,6 @@ public final class StopStrategies {
      * @param attemptNumber the number of failed attempts before stopping
      * @return a stop strategy which stops after {@code attemptNumber} attempts
      */
-    @SuppressWarnings("WeakerAccess")
     public static StopStrategy stopAfterAttempt(int attemptNumber) {
         return new StopAfterAttemptStrategy(attemptNumber);
     }
@@ -84,7 +82,6 @@ public final class StopStrategies {
      * @param timeUnit the unit of the duration
      * @return a stop strategy which stops after {@code delayInMillis} time in milliseconds
      */
-    @SuppressWarnings("WeakerAccess")
     public static StopStrategy stopAfterDelay(long duration, @Nonnull TimeUnit timeUnit) {
         Preconditions.checkNotNull(timeUnit, "The time unit may not be null");
         return new StopAfterDelayStrategy(timeUnit.toMillis(duration));
