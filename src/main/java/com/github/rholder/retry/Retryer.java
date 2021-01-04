@@ -53,7 +53,7 @@ public final class Retryer {
      * @param waitStrategy       the strategy used to decide how much time to sleep between attempts
      * @param blockStrategy      the strategy used to decide how to block between retry attempts;
      *                           eg, Thread#sleep(), latches, etc.
-     * @param retryPredicates     the predicates used to decide if the attempt must be retried (without
+     * @param retryPredicates    the predicates used to decide if the attempt must be retried (without
      *                           regard to the StopStrategy).
      * @param listeners          collection of retry listeners
      */
@@ -98,7 +98,7 @@ public final class Retryer {
             try {
                 T result = attemptTimeLimiter.call(callable);
                 attempt = new Attempt<>(result, attemptNumber, System.currentTimeMillis() - startTimeMillis);
-            } catch(InterruptedException e) {
+            } catch (InterruptedException e) {
                 throw e;
             } catch (Throwable t) {
                 attempt = new Attempt<>(t, attemptNumber, System.currentTimeMillis() - startTimeMillis);

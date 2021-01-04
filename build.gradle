@@ -34,7 +34,7 @@ repositories {
     mavenCentral()
 }
 
-ext.junitJupiterVersion  = '5.7.0'
+ext.junitJupiterVersion = '5.7.0'
 
 dependencies {
     compile 'com.google.guava:guava:30.0-jre'

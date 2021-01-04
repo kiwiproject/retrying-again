@@ -56,7 +56,7 @@ public class Attempt<T> {
      *
      * @return the result of the attempt
      * @throws IllegalStateException If the attempt resulted in an exception rather
-     *         than returning a result.
+     *                               than returning a result.
      */
     public T get() {
         checkState(hasResult(), "The attempt resulted in an exception, not in a result");
@@ -67,7 +67,7 @@ public class Attempt<T> {
      * Tells if the call returned a result or not
      *
      * @return <code>true</code> if the call returned a result, <code>false</code>
-     *         if it threw an exception
+     * if it threw an exception
      */
     public boolean hasResult() {
         // Check the exception field, because the Callable may have succeeded and returned null.
@@ -79,7 +79,7 @@ public class Attempt<T> {
      * Tells if the call threw an exception or not
      *
      * @return <code>true</code> if the call threw an exception, <code>false</code>
-     *         if it returned a result
+     * if it returned a result
      */
     public boolean hasException() {
         return throwable != null;

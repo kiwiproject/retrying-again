@@ -27,8 +27,8 @@ import java.util.concurrent.Callable;
 public interface AttemptTimeLimiter {
     /**
      * @param callable to subject to the time limit
+     * @param <T>      The return type of the Callable's call method
      * @return the return of the given callable
-     * @param <T> The return type of the Callable's call method
      * @throws Exception any exception from this invocation
      */
     <T> T call(Callable<T> callable) throws Exception;
