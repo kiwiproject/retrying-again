@@ -18,7 +18,9 @@
 
 package com.github.rholder.retry;
 
-import org.junit.jupiter.api.Assertions;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.Callable;
@@ -34,18 +36,17 @@ class AttemptTimeLimiterTest {
             .build();
 
     @Test
-    void testAttemptTimeLimit() throws Exception {
-        try {
-            r.call(new SleepyOut(0L));
-        } catch (Exception e) {
-            Assertions.fail("Should not timeout");
-        }
+    void testAttemptTimeLimitWhenShouldNotTimeOut() {
+        assertThatCode(() -> r.call(new SleepyOut(0L)))
+                .describedAs("Should not timeout")
+                .doesNotThrowAnyException();
+    }
 
-        try {
-            r.call(new SleepyOut(10 * 1000L));
-            Assertions.fail("Expected timeout exception");
-        } catch (RetryException ignored) {
-        }
+    @Test
+    void testAttemptTimeLimitWhenShouldTimeOut() {
+        assertThatThrownBy(() -> r.call(new SleepyOut(10 * 1000L)))
+                .describedAs("Expected timeout exception")
+                .isExactlyInstanceOf(RetryException.class);
     }
 
     static class SleepyOut implements Callable<Void> {
