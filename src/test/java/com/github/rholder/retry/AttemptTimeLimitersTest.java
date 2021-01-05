@@ -1,5 +1,5 @@
 /*
- * copyright 2017-2018 Robert Huffman
+ * Copyright 2017-2018 Robert Huffman
  * Modifications copyright 2020-2021 Kiwi Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +16,7 @@
  */
 package com.github.rholder.retry;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import com.google.common.collect.Sets;
 import org.junit.jupiter.api.Test;
@@ -42,8 +42,10 @@ class AttemptTimeLimitersTest {
                     AttemptTimeLimiters.fixedTimeLimit(1, TimeUnit.SECONDS);
             timeLimiter.call(callable);
         }
-        assertTrue(threadsUsed.size() < iterations,
-                () -> "Should have used less than " + iterations + " threads");
+
+        assertThat(threadsUsed.size())
+                .describedAs("Should have used less than %d threads", iterations)
+                .isLessThan(iterations);
     }
 
 }
