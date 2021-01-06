@@ -22,8 +22,6 @@ import java.util.concurrent.Callable;
 
 /**
  * A rule to wrap any single attempt in a time limit, where it will possibly be interrupted if the limit is exceeded.
- *
- * @author Jason Dunkelberger (dirkraft)
  */
 public interface AttemptTimeLimiter {
     /**

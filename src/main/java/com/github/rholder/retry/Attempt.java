@@ -25,7 +25,6 @@ import static com.google.common.base.Preconditions.checkState;
  * or in a Throwable thrown by the call.
  *
  * @param <T> The type returned by the wrapped callable.
- * @author JB
  */
 @SuppressWarnings("WeakerAccess")
 public class Attempt<T> {

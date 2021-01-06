@@ -30,8 +30,6 @@ import java.util.function.Function;
 
 /**
  * Factory class for instances of {@link WaitStrategy}.
- *
- * @author JB
  */
 public final class WaitStrategies {
 

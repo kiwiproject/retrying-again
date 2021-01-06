@@ -28,9 +28,6 @@ import java.util.function.Predicate;
 
 /**
  * A builder used to configure and create a {@link Retryer}.
- *
- * @author JB
- * @author Jason Dunkelberger (dirkraft)
  */
 public class RetryerBuilder {
     private AttemptTimeLimiter attemptTimeLimiter;

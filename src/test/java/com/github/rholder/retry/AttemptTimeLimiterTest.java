@@ -26,9 +26,6 @@ import org.junit.jupiter.api.Test;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
-/**
- * @author Jason Dunkelberger (dirkraft)
- */
 class AttemptTimeLimiterTest {
 
     private final Retryer r = RetryerBuilder.newBuilder()

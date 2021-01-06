@@ -36,9 +36,6 @@ import java.util.function.Predicate;
  * <p>
  * Retryer instances are better constructed with a {@link RetryerBuilder}. A retryer
  * is thread-safe, provided the arguments passed to its constructor are thread-safe.
- *
- * @author JB
- * @author Jason Dunkelberger (dirkraft)
  */
 public final class Retryer {
     private final StopStrategy stopStrategy;
@@ -188,8 +185,6 @@ public final class Retryer {
     /**
      * A {@link Callable} which wraps another {@link Callable} in order to add
      * retrying behavior from a given {@link Retryer} instance.
-     *
-     * @author JB
      */
     public static class RetryerCallable<T> implements Callable<T> {
         private Retryer retryer;

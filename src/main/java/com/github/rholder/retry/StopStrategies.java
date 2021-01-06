@@ -26,8 +26,6 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Factory class for {@link StopStrategy} instances.
- *
- * @author JB
  */
 public final class StopStrategies {
     private static final StopStrategy NEVER_STOP = new NeverStopStrategy();

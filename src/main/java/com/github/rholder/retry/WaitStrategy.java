@@ -1,5 +1,6 @@
 /*
  * Copyright 2012-2015 Ray Holder
+ * Modifications copyright 2020-2021 Kiwi Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +19,6 @@ package com.github.rholder.retry;
 
 /**
  * A strategy used to decide how long to sleep before retrying after a failed attempt.
- *
- * @author JB
  */
 public interface WaitStrategy {
 

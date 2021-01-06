@@ -25,8 +25,6 @@ import javax.annotation.concurrent.Immutable;
  * An exception indicating that none of the attempts of the {@link Retryer}
  * succeeded. If the last {@link Attempt} resulted in an Exception, it is set as
  * the cause of the {@link RetryException}.
- *
- * @author JB
  */
 @Immutable
 public final class RetryException extends Exception {
