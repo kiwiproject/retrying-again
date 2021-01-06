@@ -42,7 +42,10 @@ class RetryerTest {
 
         var thrown = catchThrowable(() -> retryer.call(thrower));
         var retryException = assertIsExactType(thrown, RetryException.class);
-        assertThat(retryException.getCause()).isExactlyInstanceOf(throwableClass);
+        assertThat(retryException).hasCauseExactlyInstanceOf(throwableClass);
+        assertThat(retryException.getNumberOfFailedAttempts()).isOne();
+        assertThat(retryException.getLastFailedAttempt().hasResult()).isFalse();
+        assertThat(retryException.getLastFailedAttempt().hasException()).isTrue();
         assertThat(thrower.invocations).isOne();
     }
 
@@ -54,7 +57,10 @@ class RetryerTest {
 
         var thrown = catchThrowable(() -> retryer.run(thrower));
         var retryException = assertIsExactType(thrown, RetryException.class);
-        assertThat(retryException.getCause()).isExactlyInstanceOf(throwableClass);
+        assertThat(retryException).hasCauseExactlyInstanceOf(throwableClass);
+        assertThat(retryException.getNumberOfFailedAttempts()).isOne();
+        assertThat(retryException.getLastFailedAttempt().hasResult()).isFalse();
+        assertThat(retryException.getLastFailedAttempt().hasException()).isTrue();
         assertThat(thrower.invocations).isOne();
     }
 
@@ -117,7 +123,10 @@ class RetryerTest {
 
         var thrown = catchThrowable(() -> retryer.call(thrower));
         var retryException = assertIsExactType(thrown, RetryException.class);
-        assertThat(retryException.getCause()).isExactlyInstanceOf(throwableClass);
+        assertThat(retryException).hasCauseExactlyInstanceOf(throwableClass);
+        assertThat(retryException.getNumberOfFailedAttempts()).isEqualTo(3);
+        assertThat(retryException.getLastFailedAttempt().hasResult()).isFalse();
+        assertThat(retryException.getLastFailedAttempt().hasException()).isTrue();
         assertThat(thrower.invocations).isEqualTo(3);
     }
 
@@ -132,7 +141,10 @@ class RetryerTest {
 
         var thrown = catchThrowable(() -> retryer.run(thrower));
         var retryException = assertIsExactType(thrown, RetryException.class);
-        assertThat(retryException.getCause()).isExactlyInstanceOf(throwableClass);
+        assertThat(retryException).hasCauseExactlyInstanceOf(throwableClass);
+        assertThat(retryException.getNumberOfFailedAttempts()).isEqualTo(3);
+        assertThat(retryException.getLastFailedAttempt().hasResult()).isFalse();
+        assertThat(retryException.getLastFailedAttempt().hasException()).isTrue();
         assertThat(thrower.invocations).isEqualTo(3);
     }
 
