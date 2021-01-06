@@ -54,19 +54,6 @@ class StopStrategiesTest {
             "1000, true",
             "1001, true"
     })
-    void testStopAfterDelayWithMilliseconds(long delaySinceFirstAttempt, boolean expectedShouldStop) {
-        //noinspection deprecation
-        var stopStrategy = StopStrategies.stopAfterDelay(1000);
-        assertThat(stopStrategy.shouldStop(failedAttempt(2, delaySinceFirstAttempt)))
-                .isEqualTo(expectedShouldStop);
-    }
-
-    @ParameterizedTest
-    @CsvSource({
-            "999, false",
-            "1000, true",
-            "1001, true"
-    })
     void testStopAfterDelayWithTimeUnit(long delaySinceFirstAttempt, boolean expectedShouldStop) {
         var stopStrategy = StopStrategies.stopAfterDelay(1, TimeUnit.SECONDS);
         assertThat(stopStrategy.shouldStop(failedAttempt(2, delaySinceFirstAttempt)))
