@@ -19,8 +19,8 @@
 package com.github.rholder.retry;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.catchThrowable;
-import static org.assertj.core.api.Assertions.fail;
 import static org.kiwiproject.test.assertj.KiwiAssertJ.assertIsExactType;
 
 import com.github.rholder.retry.Retryer.RetryerCallable;
@@ -42,7 +42,7 @@ class RetryerBuilderTest {
     @Test
     void testWithWaitStrategy() throws Exception {
         Callable<Boolean> callable = notNullAfter5Attempts();
-        Retryer retryer = RetryerBuilder.newBuilder()
+        var retryer = RetryerBuilder.newBuilder()
                 .withWaitStrategy(WaitStrategies.fixedWait(50L, TimeUnit.MILLISECONDS))
                 .retryIfResult(Objects::isNull)
                 .build();
@@ -56,7 +56,7 @@ class RetryerBuilderTest {
     @Test
     void testWithMoreThanOneWaitStrategyOneBeingFixed() throws Exception {
         Callable<Boolean> callable = notNullAfter5Attempts();
-        Retryer retryer = RetryerBuilder.newBuilder()
+        var retryer = RetryerBuilder.newBuilder()
                 .withWaitStrategy(WaitStrategies.join(
                         WaitStrategies.fixedWait(50L, TimeUnit.MILLISECONDS),
                         WaitStrategies.fibonacciWait(10, Long.MAX_VALUE, TimeUnit.MILLISECONDS)))
@@ -72,7 +72,7 @@ class RetryerBuilderTest {
     @Test
     void testWithMoreThanOneWaitStrategyOneBeingIncremental() throws Exception {
         Callable<Boolean> callable = notNullAfter5Attempts();
-        Retryer retryer = RetryerBuilder.newBuilder()
+        var retryer = RetryerBuilder.newBuilder()
                 .withWaitStrategy(WaitStrategies.join(
                         WaitStrategies.incrementingWait(10L, TimeUnit.MILLISECONDS, 10L, TimeUnit.MILLISECONDS),
                         WaitStrategies.fibonacciWait(10, Long.MAX_VALUE, TimeUnit.MILLISECONDS)))
@@ -85,6 +85,7 @@ class RetryerBuilderTest {
         assertThat(result).isTrue();
     }
 
+    // TODO Consider parameterizing this
     private Callable<Boolean> notNullAfter5Attempts() {
         return new Callable<>() {
             int counter = 0;
@@ -103,7 +104,7 @@ class RetryerBuilderTest {
     @Test
     void testWithStopStrategy() {
         Callable<Boolean> callable = notNullAfter5Attempts();
-        Retryer retryer = RetryerBuilder.newBuilder()
+        var retryer = RetryerBuilder.newBuilder()
                 .withStopStrategy(StopStrategies.stopAfterAttempt(3))
                 .retryIfResult(Objects::isNull)
                 .build();
@@ -123,10 +124,10 @@ class RetryerBuilderTest {
     @Test
     void testWithBlockStrategy() throws Exception {
         Callable<Boolean> callable = notNullAfter5Attempts();
-        final AtomicInteger counter = new AtomicInteger();
+        var counter = new AtomicInteger();
         BlockStrategy blockStrategy = sleepTime -> counter.incrementAndGet();
 
-        Retryer retryer = RetryerBuilder.newBuilder()
+        var retryer = RetryerBuilder.newBuilder()
                 .withBlockStrategy(blockStrategy)
                 .retryIfResult(Objects::isNull)
                 .build();
@@ -140,7 +141,7 @@ class RetryerBuilderTest {
     @Test
     void testRetryIfException_WhenCompletesSuccessfully() throws Exception {
         Callable<Boolean> callable = noIOExceptionAfter5Attempts();
-        Retryer retryer = RetryerBuilder.newBuilder()
+        var retryer = RetryerBuilder.newBuilder()
                 .retryIfException()
                 .build();
         boolean result = retryer.call(callable);
@@ -150,7 +151,7 @@ class RetryerBuilderTest {
     @Test
     void testRetryIfException_WhenFailsToComplete_DueToCheckedException() {
         Callable<Boolean> callable = noIOExceptionAfter5Attempts();
-        Retryer retryer = RetryerBuilder.newBuilder()
+        var retryer = RetryerBuilder.newBuilder()
                 .retryIfException()
                 .withStopStrategy(StopStrategies.stopAfterAttempt(3))
                 .build();
@@ -173,6 +174,7 @@ class RetryerBuilderTest {
         assertThat(retryException.getNumberOfFailedAttempts()).isEqualTo(3);
     }
 
+    // TODO Consider parameterizing this
     private Callable<Boolean> noIllegalStateExceptionAfter5Attempts() {
         return new Callable<>() {
             int counter = 0;
@@ -188,6 +190,7 @@ class RetryerBuilderTest {
         };
     }
 
+    // TODO Consider parameterizing this
     private Callable<Boolean> noIOExceptionAfter5Attempts() {
         return new Callable<>() {
             int counter = 0;
@@ -205,131 +208,156 @@ class RetryerBuilderTest {
 
     @Test
     void testRetryIfRuntimeException() throws Exception {
-        Callable<Boolean> callable = noIOExceptionAfter5Attempts();
-        Retryer retryer = RetryerBuilder.newBuilder()
+        // TODO Split out logical tests: testRetryIfRuntimeException
+
+        Callable<Boolean> callable1 = noIOExceptionAfter5Attempts();
+        var retryer1 = RetryerBuilder.newBuilder()
                 .retryIfRuntimeException()
                 .build();
-        try {
-            retryer.call(callable);
-            fail("IOException expected");
-        } catch (RetryException ignored) {
-        }
 
-        callable = noIllegalStateExceptionAfter5Attempts();
-        assertThat(retryer.call(callable)).isTrue();
+        var thrown1 = catchThrowable(() -> retryer1.call(callable1));
+        var retryException1 = assertIsExactType(thrown1, RetryException.class);
+        assertThat(retryException1).hasCauseExactlyInstanceOf(IOException.class);
 
-        callable = noIllegalStateExceptionAfter5Attempts();
-        retryer = RetryerBuilder.newBuilder()
+        //
+
+        Callable<Boolean> callable2 = noIllegalStateExceptionAfter5Attempts();
+        var retryer2 = RetryerBuilder.newBuilder()
+                .retryIfRuntimeException()
+                .build();
+        assertThat(retryer2.call(callable2)).isTrue();
+
+        //
+
+        Callable<Boolean> callable3 = noIllegalStateExceptionAfter5Attempts();
+        var retryer3 = RetryerBuilder.newBuilder()
                 .retryIfRuntimeException()
                 .withStopStrategy(StopStrategies.stopAfterAttempt(3))
                 .build();
-        try {
-            retryer.call(callable);
-            fail("Exception expected");
-        } catch (RetryException ignored) {
-        }
+
+        var thrown3 = catchThrowable(() -> retryer3.call(callable3));
+        var retryException3 = assertIsExactType(thrown3, RetryException.class);
+        assertThat(retryException3).hasCauseExactlyInstanceOf(IllegalStateException.class);
     }
 
     @Test
     void testRetryIfExceptionOfType() throws Exception {
-        Callable<Boolean> callable = noIOExceptionAfter5Attempts();
-        Retryer retryer = RetryerBuilder.newBuilder()
+        // TODO Split out logical tests: testRetryIfExceptionOfType
+
+        Callable<Boolean> callable1 = noIOExceptionAfter5Attempts();
+        var retryer1 = RetryerBuilder.newBuilder()
                 .retryIfExceptionOfType(IOException.class)
                 .build();
-        assertThat(retryer.call(callable)).isTrue();
+        assertThat(retryer1.call(callable1)).isTrue();
 
-        callable = noIllegalStateExceptionAfter5Attempts();
-        try {
-            retryer.call(callable);
-            fail("IllegalStateException expected");
-        } catch (RetryException ignored) {
-        }
+        //
 
-        callable = noIOExceptionAfter5Attempts();
-        retryer = RetryerBuilder.newBuilder()
+        Callable<Boolean> callable2 = noIllegalStateExceptionAfter5Attempts();
+        var retryer2 = RetryerBuilder.newBuilder()
+                .retryIfExceptionOfType(IOException.class)
+                .build();
+
+        var thrown2 = catchThrowable(() -> retryer2.call(callable2));
+        var retryException2 = assertIsExactType(thrown2, RetryException.class);
+        assertThat(retryException2).hasCauseExactlyInstanceOf(IllegalStateException.class);
+
+        //
+
+        Callable<Boolean> callable3 = noIOExceptionAfter5Attempts();
+        var retryer3 = RetryerBuilder.newBuilder()
                 .retryIfExceptionOfType(IOException.class)
                 .withStopStrategy(StopStrategies.stopAfterAttempt(3))
                 .build();
-        try {
-            retryer.call(callable);
-            fail("Exception expected");
-        } catch (RetryException ignored) {
-        }
+
+        var thrown3 = catchThrowable(() -> retryer3.call(callable3));
+        var retryException3 = assertIsExactType(thrown3, RetryException.class);
+        assertThat(retryException3).hasCauseExactlyInstanceOf(IOException.class);
     }
 
     @Test
     void testRetryIfExceptionWithPredicate() throws Exception {
-        Callable<Boolean> callable = noIOExceptionAfter5Attempts();
-        Retryer retryer = RetryerBuilder.newBuilder()
+        // TODO Split out logical tests: testRetryIfExceptionWithPredicate
+
+        Callable<Boolean> callable1 = noIOExceptionAfter5Attempts();
+        var retryer1 = RetryerBuilder.newBuilder()
                 .retryIfException(t -> t instanceof IOException)
                 .build();
-        assertThat(retryer.call(callable)).isTrue();
+        assertThat(retryer1.call(callable1)).isTrue();
 
-        callable = noIllegalStateExceptionAfter5Attempts();
-        try {
-            retryer.call(callable);
-            fail("ExecutionException expected");
-        } catch (RetryException ignored) {
-        }
+        //
 
-        callable = noIOExceptionAfter5Attempts();
-        retryer = RetryerBuilder.newBuilder()
+        Callable<Boolean> callable2 = noIllegalStateExceptionAfter5Attempts();
+        var retryer2 = RetryerBuilder.newBuilder()
+                .retryIfException(t -> t instanceof IOException)
+                .build();
+
+        var thrown2 = catchThrowable(() -> retryer2.call(callable2));
+        var retryException2 = assertIsExactType(thrown2, RetryException.class);
+        assertThat(retryException2).hasCauseExactlyInstanceOf(IllegalStateException.class);
+
+        //
+
+        Callable<Boolean> callable3 = noIOExceptionAfter5Attempts();
+        var retryer3 = RetryerBuilder.newBuilder()
                 .retryIfException(t -> t instanceof IOException)
                 .withStopStrategy(StopStrategies.stopAfterAttempt(3))
                 .build();
-        try {
-            retryer.call(callable);
-            fail("Exception expected");
-        } catch (RetryException ignored) {
-        }
+
+        var thrown3 = catchThrowable(() -> retryer3.call(callable3));
+        var retryException3 = assertIsExactType(thrown3, RetryException.class);
+        assertThat(retryException3).hasCauseExactlyInstanceOf(IOException.class);
     }
 
     @Test
     void testRetryIfResult() throws Exception {
-        Callable<Boolean> callable = notNullAfter5Attempts();
-        Retryer retryer = RetryerBuilder.newBuilder()
+        // TODO Split out logical tests: testRetryIfResult
+
+        Callable<Boolean> callable1 = notNullAfter5Attempts();
+        var retryer1 = RetryerBuilder.newBuilder()
                 .retryIfResult(Objects::isNull)
                 .build();
-        assertThat(retryer.call(callable)).isTrue();
+        assertThat(retryer1.call(callable1)).isTrue();
 
-        callable = notNullAfter5Attempts();
-        retryer = RetryerBuilder.newBuilder()
+        //
+
+        Callable<Boolean> callable2 = notNullAfter5Attempts();
+        var retryer2 = RetryerBuilder.newBuilder()
                 .retryIfResult(Objects::isNull)
                 .withStopStrategy(StopStrategies.stopAfterAttempt(3))
                 .build();
-        try {
-            retryer.call(callable);
-            fail("Exception expected");
-        } catch (RetryException e) {
-            assertThat(e.getNumberOfFailedAttempts()).isEqualTo(3);
-            assertThat(e.getLastFailedAttempt().hasResult()).isTrue();
-            assertThat(e.getLastFailedAttempt().getResult()).isNull();
-            assertThat(e.getCause()).isNull();
-        }
+
+        var thrown2 = catchThrowable(() -> retryer2.call(callable2));
+        var retryException2 = assertIsExactType(thrown2, RetryException.class);
+        assertThat(retryException2.getNumberOfFailedAttempts()).isEqualTo(3);
+        assertThat(retryException2.getLastFailedAttempt().hasResult()).isTrue();
+        assertThat(retryException2.getLastFailedAttempt().getResult()).isNull();
+        assertThat(retryException2.getCause()).isNull();
     }
 
     @Test
     void testMultipleRetryConditions() throws Exception {
-        Callable<Boolean> callable = notNullResultOrIOExceptionOrRuntimeExceptionAfter5Attempts();
-        Retryer retryer = RetryerBuilder.newBuilder()
+        // TODO Split out logical tests: testMultipleRetryConditions
+
+        Callable<Boolean> callable1 = notNullResultOrIOExceptionOrRuntimeExceptionAfter5Attempts();
+        var retryer1 = RetryerBuilder.newBuilder()
                 .retryIfResult(Objects::isNull)
                 .retryIfExceptionOfType(IOException.class)
                 .retryIfRuntimeException()
                 .withStopStrategy(StopStrategies.stopAfterAttempt(3))
                 .build();
-        try {
-            retryer.call(callable);
-            fail("Exception expected");
-        } catch (RetryException ignored) {
-        }
 
-        callable = notNullResultOrIOExceptionOrRuntimeExceptionAfter5Attempts();
-        retryer = RetryerBuilder.newBuilder()
+        assertThatThrownBy(() -> retryer1.call(callable1))
+                .isExactlyInstanceOf(RetryException.class);
+
+        //
+
+        Callable<Boolean> callable2 = notNullResultOrIOExceptionOrRuntimeExceptionAfter5Attempts();
+        var retryer2 = RetryerBuilder.newBuilder()
                 .retryIfResult(Objects::isNull)
                 .retryIfExceptionOfType(IOException.class)
                 .retryIfRuntimeException()
                 .build();
-        assertThat(retryer.call(callable)).isTrue();
+        assertThat(retryer2.call(callable2)).isTrue();
     }
 
     private Callable<Boolean> notNullResultOrIOExceptionOrRuntimeExceptionAfter5Attempts() {
@@ -355,28 +383,26 @@ class RetryerBuilderTest {
 
     @Test
     void testInterruption() throws Exception {
-        final AtomicBoolean result = new AtomicBoolean(false);
-        final CountDownLatch latch = new CountDownLatch(1);
+        var result = new AtomicBoolean(false);
+        var latch = new CountDownLatch(1);
         Runnable r = () -> {
-            Retryer retryer = RetryerBuilder.newBuilder()
+            var retryer = RetryerBuilder.newBuilder()
                     .withWaitStrategy(WaitStrategies.fixedWait(1000L, TimeUnit.MILLISECONDS))
                     .retryIfResult(Objects::isNull)
                     .build();
-            try {
-                retryer.call(alwaysNull(latch));
-                fail("Exception expected");
-            } catch (InterruptedException e) {
-                result.set(true);
-            } catch (Exception e) {
-                System.out.println("Unexpected exception in test runnable: " + e);
-                e.printStackTrace();
-            }
+
+            assertThatThrownBy(() -> retryer.call(alwaysNull(latch)))
+                    .isExactlyInstanceOf(InterruptedException.class);
+
+            result.set(true);
         };
-        Thread t = new Thread(r);
+
+        var t = new Thread(r);
         t.start();
         latch.countDown();
         t.interrupt();
         t.join();
+
         //noinspection ConstantConditions
         assertThat(result).isTrue();
     }
@@ -393,14 +419,11 @@ class RetryerBuilderTest {
 
     @Test
     void testWhetherBuilderFailsForNullWaitStrategyWithCompositeStrategies() {
-        try {
-            RetryerBuilder.newBuilder()
-                    .withWaitStrategy(WaitStrategies.join(null, null))
-                    .build();
-            fail("Expected to fail for null wait strategy");
-        } catch (IllegalStateException exception) {
-            assertThat(exception.getMessage()).contains("Cannot have a null wait strategy");
-        }
+        assertThatThrownBy(() -> RetryerBuilder.newBuilder()
+                .withWaitStrategy(WaitStrategies.join(null, null))
+                .build())
+                .isExactlyInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("Cannot have a null wait strategy");
     }
 
     @Test
