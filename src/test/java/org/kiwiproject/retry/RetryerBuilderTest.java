@@ -16,16 +16,16 @@
  * limitations under the License.
  */
 
-package com.github.rholder.retry;
+package org.kiwiproject.retry;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.kiwiproject.test.assertj.KiwiAssertJ.assertIsExactType;
 
-import com.github.rholder.retry.Retryer.RetryerCallable;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.kiwiproject.retry.Retryer.RetryerCallable;
 
 import java.io.IOException;
 import java.util.HashMap;

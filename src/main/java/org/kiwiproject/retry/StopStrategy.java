@@ -1,6 +1,5 @@
 /*
  * Copyright 2012-2015 Ray Holder
- * Modifications copyright 2017-2018 Robert Huffman
  * Modifications copyright 2020-2021 Kiwi Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,22 +15,18 @@
  * limitations under the License.
  */
 
-package com.github.rholder.retry;
-
-import com.google.common.annotations.Beta;
+package org.kiwiproject.retry;
 
 /**
- * This listener provides callbacks for several events that occur when running
- * code through a {@link Retryer} instance.
+ * A strategy used to decide if a retryer must stop retrying after a failed attempt or not.
  */
-@Beta
-public interface RetryListener {
+public interface StopStrategy {
 
     /**
-     * This method with fire no matter what the result is and before the
-     * retry predicate and stop strategies are applied.
+     * Returns <code>true</code> if the retryer should stop retrying.
      *
-     * @param attempt the current {@link Attempt}
+     * @param failedAttempt the previous failed {@code Attempt}
+     * @return <code>true</code> if the retryer must stop, <code>false</code> otherwise
      */
-    void onRetry(Attempt<?> attempt);
+    boolean shouldStop(Attempt failedAttempt);
 }

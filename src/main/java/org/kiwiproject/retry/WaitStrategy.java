@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.github.rholder.retry;
+package org.kiwiproject.retry;
 
 /**
  * A strategy used to decide how long to sleep before retrying after a failed attempt.

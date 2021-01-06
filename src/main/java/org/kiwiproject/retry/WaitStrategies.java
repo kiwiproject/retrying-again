@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.github.rholder.retry;
+package org.kiwiproject.retry;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;

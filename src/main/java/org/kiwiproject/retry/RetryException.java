@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.github.rholder.retry;
+package org.kiwiproject.retry;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
