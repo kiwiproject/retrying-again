@@ -240,7 +240,7 @@ public final class WaitStrategies {
         }
 
         @Override
-        public long computeSleepTime(Attempt failedAttempt) {
+        public long computeSleepTime(Attempt<?> failedAttempt) {
             return sleepTime;
         }
     }
@@ -260,7 +260,7 @@ public final class WaitStrategies {
         }
 
         @Override
-        public long computeSleepTime(Attempt failedAttempt) {
+        public long computeSleepTime(Attempt<?> failedAttempt) {
             long t = Math.abs(RANDOM.nextLong()) % (maximum - minimum);
             return t + minimum;
         }
@@ -279,7 +279,7 @@ public final class WaitStrategies {
         }
 
         @Override
-        public long computeSleepTime(Attempt failedAttempt) {
+        public long computeSleepTime(Attempt<?> failedAttempt) {
             long result = initialSleepTime + (increment * (failedAttempt.getAttemptNumber() - 1));
             return result >= 0L ? result : 0L;
         }
@@ -300,7 +300,7 @@ public final class WaitStrategies {
         }
 
         @Override
-        public long computeSleepTime(Attempt failedAttempt) {
+        public long computeSleepTime(Attempt<?> failedAttempt) {
             double exp = Math.pow(2, failedAttempt.getAttemptNumber());
             long result = Math.round(multiplier * exp);
             if (result > maximumWait) {
@@ -324,7 +324,7 @@ public final class WaitStrategies {
         }
 
         @Override
-        public long computeSleepTime(Attempt failedAttempt) {
+        public long computeSleepTime(Attempt<?> failedAttempt) {
             long fib = fib(failedAttempt.getAttemptNumber());
             long result = multiplier * fib;
 
@@ -363,7 +363,7 @@ public final class WaitStrategies {
         }
 
         @Override
-        public long computeSleepTime(Attempt failedAttempt) {
+        public long computeSleepTime(Attempt<?> failedAttempt) {
             long waitTime = 0L;
             for (WaitStrategy waitStrategy : waitStrategies) {
                 waitTime += waitStrategy.computeSleepTime(failedAttempt);
@@ -384,7 +384,7 @@ public final class WaitStrategies {
 
         @SuppressWarnings({"unchecked"})
         @Override
-        public long computeSleepTime(Attempt lastAttempt) {
+        public long computeSleepTime(Attempt<?> lastAttempt) {
             if (lastAttempt.hasException()) {
                 Throwable cause = lastAttempt.getException();
                 if (exceptionClass.isAssignableFrom(cause.getClass())) {
