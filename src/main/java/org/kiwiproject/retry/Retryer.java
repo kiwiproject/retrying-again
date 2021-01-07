@@ -24,6 +24,7 @@ import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 
 /**
@@ -90,16 +91,16 @@ public final class Retryer {
      *                              {@link Thread#sleep} is invoked between attempts
      */
     public <T> T call(Callable<T> callable) throws RetryException, InterruptedException {
-        long startTimeMillis = System.currentTimeMillis();
+        long startTimeNanos = System.nanoTime();
         for (int attemptNumber = 1; ; attemptNumber++) {
             Attempt<T> attempt;
             try {
                 T result = attemptTimeLimiter.call(callable);
-                attempt = new Attempt<>(result, attemptNumber, System.currentTimeMillis() - startTimeMillis);
+                attempt = new Attempt<>(result, attemptNumber, computeMillisSince(startTimeNanos));
             } catch (InterruptedException e) {
                 throw e;
             } catch (Throwable t) {
-                attempt = new Attempt<>(t, attemptNumber, System.currentTimeMillis() - startTimeMillis);
+                attempt = new Attempt<>(t, attemptNumber, computeMillisSince(startTimeNanos));
             }
 
             for (RetryListener listener : listeners) {
@@ -117,6 +118,10 @@ public final class Retryer {
                 blockStrategy.block(sleepTime);
             }
         }
+    }
+
+    private static long computeMillisSince(long startTimeNanos) {
+        return TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTimeNanos);
     }
 
     /**
