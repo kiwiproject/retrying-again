@@ -187,11 +187,10 @@ public final class Retryer {
      * retrying behavior from a given {@link Retryer} instance.
      */
     public static class RetryerCallable<T> implements Callable<T> {
-        private Retryer retryer;
-        private Callable<T> callable;
+        private final Retryer retryer;
+        private final Callable<T> callable;
 
-        private RetryerCallable(Retryer retryer,
-                                Callable<T> callable) {
+        private RetryerCallable(Retryer retryer, Callable<T> callable) {
             this.retryer = retryer;
             this.callable = callable;
         }

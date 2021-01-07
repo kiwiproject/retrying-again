@@ -34,8 +34,8 @@ public class RetryerBuilder {
     private StopStrategy stopStrategy;
     private WaitStrategy waitStrategy;
     private BlockStrategy blockStrategy;
-    private List<Predicate<Attempt<?>>> retryPredicates = Lists.newArrayList();
-    private List<RetryListener> listeners = new ArrayList<>();
+    private final List<Predicate<Attempt<?>>> retryPredicates = Lists.newArrayList();
+    private final List<RetryListener> listeners = new ArrayList<>();
 
     private RetryerBuilder() {
     }
@@ -199,7 +199,7 @@ public class RetryerBuilder {
 
     private static final class ExceptionClassPredicate implements Predicate<Attempt<?>> {
 
-        private Class<? extends Throwable> exceptionClass;
+        private final Class<? extends Throwable> exceptionClass;
 
         ExceptionClassPredicate(Class<? extends Throwable> exceptionClass) {
             this.exceptionClass = exceptionClass;
@@ -214,7 +214,7 @@ public class RetryerBuilder {
 
     private static final class ResultPredicate<T> implements Predicate<Attempt<?>> {
 
-        private Predicate<T> delegate;
+        private final Predicate<T> delegate;
 
         ResultPredicate(Predicate<T> delegate) {
             this.delegate = delegate;
@@ -237,7 +237,7 @@ public class RetryerBuilder {
 
     private static final class ExceptionPredicate implements Predicate<Attempt<?>> {
 
-        private Predicate<Throwable> delegate;
+        private final Predicate<Throwable> delegate;
 
         ExceptionPredicate(Predicate<Throwable> delegate) {
             this.delegate = delegate;
