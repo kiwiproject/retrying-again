@@ -34,6 +34,7 @@ import java.util.function.Function;
 public final class WaitStrategies {
 
     private static final WaitStrategy NO_WAIT_STRATEGY = new FixedWaitStrategy(0L);
+    private static final String MAX_TIME_UNIT_MUST_BE_NON_NULL = "The maximum time unit may not be null";
 
     private WaitStrategies() {
     }
@@ -89,7 +90,7 @@ public final class WaitStrategies {
                                           long maximumTime,
                                           @Nonnull TimeUnit maximumTimeUnit) {
         Preconditions.checkNotNull(minimumTimeUnit, "The minimum time unit may not be null");
-        Preconditions.checkNotNull(maximumTimeUnit, "The maximum time unit may not be null");
+        Preconditions.checkNotNull(maximumTimeUnit, MAX_TIME_UNIT_MUST_BE_NON_NULL);
         return new RandomWaitStrategy(minimumTimeUnit.toMillis(minimumTime),
                 maximumTimeUnit.toMillis(maximumTime));
     }
@@ -135,7 +136,7 @@ public final class WaitStrategies {
      */
     public static WaitStrategy exponentialWait(long maximumTime,
                                                @Nonnull TimeUnit maximumTimeUnit) {
-        Preconditions.checkNotNull(maximumTimeUnit, "The maximum time unit may not be null");
+        Preconditions.checkNotNull(maximumTimeUnit, MAX_TIME_UNIT_MUST_BE_NON_NULL);
         return new ExponentialWaitStrategy(1, maximumTimeUnit.toMillis(maximumTime));
     }
 
@@ -153,7 +154,7 @@ public final class WaitStrategies {
     public static WaitStrategy exponentialWait(long multiplier,
                                                long maximumTime,
                                                @Nonnull TimeUnit maximumTimeUnit) {
-        Preconditions.checkNotNull(maximumTimeUnit, "The maximum time unit may not be null");
+        Preconditions.checkNotNull(maximumTimeUnit, MAX_TIME_UNIT_MUST_BE_NON_NULL);
         return new ExponentialWaitStrategy(multiplier, maximumTimeUnit.toMillis(maximumTime));
     }
 
@@ -177,7 +178,7 @@ public final class WaitStrategies {
      */
     public static WaitStrategy fibonacciWait(long maximumTime,
                                              @Nonnull TimeUnit maximumTimeUnit) {
-        Preconditions.checkNotNull(maximumTimeUnit, "The maximum time unit may not be null");
+        Preconditions.checkNotNull(maximumTimeUnit, MAX_TIME_UNIT_MUST_BE_NON_NULL);
         return new FibonacciWaitStrategy(1, maximumTimeUnit.toMillis(maximumTime));
     }
 
@@ -195,7 +196,7 @@ public final class WaitStrategies {
     public static WaitStrategy fibonacciWait(long multiplier,
                                              long maximumTime,
                                              @Nonnull TimeUnit maximumTimeUnit) {
-        Preconditions.checkNotNull(maximumTimeUnit, "The maximum time unit may not be null");
+        Preconditions.checkNotNull(maximumTimeUnit, MAX_TIME_UNIT_MUST_BE_NON_NULL);
         return new FibonacciWaitStrategy(multiplier, maximumTimeUnit.toMillis(maximumTime));
     }
 
@@ -248,6 +249,7 @@ public final class WaitStrategies {
     @Immutable
     private static final class RandomWaitStrategy implements WaitStrategy {
         private static final Random RANDOM = new Random();
+        private static final long MIN_LONG_PLUS_ONE = Long.MIN_VALUE + 1;
         private final long minimum;
         private final long maximum;
 
@@ -261,8 +263,21 @@ public final class WaitStrategies {
 
         @Override
         public long computeSleepTime(Attempt<?> failedAttempt) {
-            long t = Math.abs(RANDOM.nextLong()) % (maximum - minimum);
-            return t + minimum;
+            long randomMillis = randomPositiveLong() % (maximum - minimum);
+            return randomMillis + minimum;
+        }
+
+        /*
+         Sonar rule java:S2676 states:
+         "Neither Math.abs nor negation should be used on numbers that could be MIN_VALUE"
+
+         Math.abs(Long.MIN_VALUE) returns Long.MIN_VALUE (and is thus negative). As a result, this
+         method never returns Long.MIN_VALUE to ensure the Math.abs always returns a positive number.
+        */
+        private static long randomPositiveLong() {
+            var aLong = RANDOM.nextLong();
+            var rand = (aLong == Long.MIN_VALUE) ? MIN_LONG_PLUS_ONE : aLong;
+            return Math.abs(rand);
         }
     }
 
