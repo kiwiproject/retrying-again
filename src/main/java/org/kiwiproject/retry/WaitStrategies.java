@@ -281,7 +281,7 @@ public final class WaitStrategies {
         @Override
         public long computeSleepTime(Attempt failedAttempt) {
             long result = initialSleepTime + (increment * (failedAttempt.getAttemptNumber() - 1));
-            return result >= 0L ? result : 0L;
+            return Math.max(result, 0L);
         }
     }
 
@@ -306,7 +306,7 @@ public final class WaitStrategies {
             if (result > maximumWait) {
                 result = maximumWait;
             }
-            return result >= 0L ? result : 0L;
+            return Math.max(result, 0L);
         }
     }
 
@@ -332,7 +332,7 @@ public final class WaitStrategies {
                 result = maximumWait;
             }
 
-            return result >= 0L ? result : 0L;
+            return Math.max(result, 0L);
         }
 
         private long fib(long n) {
