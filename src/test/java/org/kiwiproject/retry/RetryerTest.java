@@ -19,8 +19,8 @@ package org.kiwiproject.retry;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.Assertions.catchThrowable;
-import static org.kiwiproject.test.assertj.KiwiAssertJ.assertIsExactType;
+import static org.kiwiproject.retry.RetryExceptionAssert.assertThatRetryExceptionThrownBy;
+import static org.kiwiproject.retry.RetryerAssert.assertThatRetryer;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -40,12 +40,11 @@ class RetryerTest {
         var retryer = RetryerBuilder.newBuilder().build();
         var thrower = new Thrower(throwableClass, 5);
 
-        var thrown = catchThrowable(() -> retryer.call(thrower));
-        var retryException = assertIsExactType(thrown, RetryException.class);
-        assertThat(retryException).hasCauseExactlyInstanceOf(throwableClass);
-        assertThat(retryException.getNumberOfFailedAttempts()).isOne();
-        assertThat(retryException.getLastFailedAttempt().hasResult()).isFalse();
-        assertThat(retryException.getLastFailedAttempt().hasException()).isTrue();
+        assertThatRetryer(retryer)
+                .throwsRetryExceptionCalling(thrower)
+                .hasNumberOfFailedAttempts(1)
+                .hasExceptionOnLastAttempt();
+
         assertThat(thrower.invocations).isOne();
     }
 
@@ -55,12 +54,11 @@ class RetryerTest {
         var retryer = RetryerBuilder.newBuilder().build();
         var thrower = new Thrower(throwableClass, 5);
 
-        var thrown = catchThrowable(() -> retryer.run(thrower));
-        var retryException = assertIsExactType(thrown, RetryException.class);
-        assertThat(retryException).hasCauseExactlyInstanceOf(throwableClass);
-        assertThat(retryException.getNumberOfFailedAttempts()).isOne();
-        assertThat(retryException.getLastFailedAttempt().hasResult()).isFalse();
-        assertThat(retryException.getLastFailedAttempt().hasException()).isTrue();
+        assertThatRetryExceptionThrownBy(() -> retryer.run(thrower))
+                .hasCauseExactlyInstanceOf(throwableClass)
+                .hasNumberOfFailedAttempts(1)
+                .hasExceptionOnLastAttempt();
+
         assertThat(thrower.invocations).isOne();
     }
 
@@ -121,12 +119,12 @@ class RetryerTest {
                 .build();
         var thrower = new Thrower(throwableClass, 5);
 
-        var thrown = catchThrowable(() -> retryer.call(thrower));
-        var retryException = assertIsExactType(thrown, RetryException.class);
-        assertThat(retryException).hasCauseExactlyInstanceOf(throwableClass);
-        assertThat(retryException.getNumberOfFailedAttempts()).isEqualTo(3);
-        assertThat(retryException.getLastFailedAttempt().hasResult()).isFalse();
-        assertThat(retryException.getLastFailedAttempt().hasException()).isTrue();
+        assertThatRetryer(retryer)
+                .throwsRetryExceptionCalling(thrower)
+                .hasCauseExactlyInstanceOf(throwableClass)
+                .hasNumberOfFailedAttempts(3)
+                .hasExceptionOnLastAttempt();
+
         assertThat(thrower.invocations).isEqualTo(3);
     }
 
@@ -139,12 +137,11 @@ class RetryerTest {
                 .build();
         var thrower = new Thrower(throwableClass, 5);
 
-        var thrown = catchThrowable(() -> retryer.run(thrower));
-        var retryException = assertIsExactType(thrown, RetryException.class);
-        assertThat(retryException).hasCauseExactlyInstanceOf(throwableClass);
-        assertThat(retryException.getNumberOfFailedAttempts()).isEqualTo(3);
-        assertThat(retryException.getLastFailedAttempt().hasResult()).isFalse();
-        assertThat(retryException.getLastFailedAttempt().hasException()).isTrue();
+        assertThatRetryExceptionThrownBy(() -> retryer.run(thrower))
+                .hasCauseExactlyInstanceOf(throwableClass)
+                .hasNumberOfFailedAttempts(3)
+                .hasExceptionOnLastAttempt();
+
         assertThat(thrower.invocations).isEqualTo(3);
     }
 

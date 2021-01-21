@@ -20,8 +20,7 @@ package org.kiwiproject.retry;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.Assertions.catchThrowable;
-import static org.kiwiproject.test.assertj.KiwiAssertJ.assertIsExactType;
+import static org.kiwiproject.retry.RetryerAssert.assertThatRetryer;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -109,12 +108,11 @@ class RetryerBuilderTest {
                 .retryIfResult(Objects::isNull)
                 .build();
 
-        var thrown = catchThrowable(() -> retryer.call(callable));
-        var retryException = assertIsExactType(thrown, RetryException.class);
-        assertThat(retryException).hasNoCause();
-        assertThat(retryException.getNumberOfFailedAttempts()).isEqualTo(3);
-        assertThat(retryException.getLastFailedAttempt().hasResult()).isTrue();
-        assertThat(retryException.getLastFailedAttempt().hasException()).isFalse();
+        assertThatRetryer(retryer)
+                .throwsRetryExceptionCalling(callable)
+                .hasNoCause()
+                .hasNumberOfFailedAttempts(3)
+                .hasResultOnLastAttempt(null);
     }
 
     @Test
@@ -125,7 +123,7 @@ class RetryerBuilderTest {
     }
 
     @Test
-    void testWithBlockStrategy() throws Exception {
+    void testWithBlockStrategy() {
         Callable<Boolean> callable = notNullAfter5Attempts();
         var counter = new AtomicInteger();
         BlockStrategy blockStrategy = sleepTime -> counter.incrementAndGet();
@@ -135,9 +133,10 @@ class RetryerBuilderTest {
                 .retryIfResult(Objects::isNull)
                 .build();
         final int retryCount = 5;
-        boolean result = retryer.call(callable);
+        assertThatRetryer(retryer)
+                .completesSuccessfullyCalling(callable)
+                .hasResult(true);
 
-        assertThat(result).isTrue();
         assertThat(counter).hasValue(retryCount);
     }
 
@@ -159,12 +158,11 @@ class RetryerBuilderTest {
                 .withStopStrategy(StopStrategies.stopAfterAttempt(3))
                 .build();
 
-        var thrown = catchThrowable(() -> retryer.call(callable));
-        var retryException = assertIsExactType(thrown, RetryException.class);
-        assertThat(retryException).hasCauseExactlyInstanceOf(IOException.class);
-        assertThat(retryException.getNumberOfFailedAttempts()).isEqualTo(3);
-        assertThat(retryException.getLastFailedAttempt().hasResult()).isFalse();
-        assertThat(retryException.getLastFailedAttempt().hasException()).isTrue();
+        assertThatRetryer(retryer)
+                .throwsRetryExceptionCalling(callable)
+                .hasCauseExactlyInstanceOf(IOException.class)
+                .hasNumberOfFailedAttempts(3)
+                .hasExceptionOnLastAttempt();
     }
 
     @Test
@@ -175,12 +173,11 @@ class RetryerBuilderTest {
                 .withStopStrategy(StopStrategies.stopAfterAttempt(3))
                 .build();
 
-        var thrown = catchThrowable(() -> retryer.call(callable));
-        var retryException = assertIsExactType(thrown, RetryException.class);
-        assertThat(retryException).hasCauseExactlyInstanceOf(IllegalStateException.class);
-        assertThat(retryException.getNumberOfFailedAttempts()).isEqualTo(3);
-        assertThat(retryException.getLastFailedAttempt().hasResult()).isFalse();
-        assertThat(retryException.getLastFailedAttempt().hasException()).isTrue();
+        assertThatRetryer(retryer)
+                .throwsRetryExceptionCalling(callable)
+                .hasCauseExactlyInstanceOf(IllegalStateException.class)
+                .hasNumberOfFailedAttempts(3)
+                .hasExceptionOnLastAttempt();
     }
 
     // TODO Consider parameterizing this
@@ -222,21 +219,23 @@ class RetryerBuilderTest {
                 .retryIfRuntimeException()
                 .build();
 
-        var thrown = catchThrowable(() -> retryer.call(callable));
-        var retryException = assertIsExactType(thrown, RetryException.class);
-        assertThat(retryException).hasCauseExactlyInstanceOf(IOException.class);
-        assertThat(retryException.getNumberOfFailedAttempts()).isOne();
-        assertThat(retryException.getLastFailedAttempt().hasResult()).isFalse();
-        assertThat(retryException.getLastFailedAttempt().hasException()).isTrue();
+        assertThatRetryer(retryer)
+                .throwsRetryExceptionCalling(callable)
+                .hasCauseExactlyInstanceOf(IOException.class)
+                .hasNumberOfFailedAttempts(1)
+                .hasExceptionOnLastAttempt();
     }
 
     @Test
-    void testRetryIfRuntimeException_WhenRuntimeExceptionThrown() throws Exception {
+    void testRetryIfRuntimeException_WhenRuntimeExceptionThrown() {
         Callable<Boolean> callable = noIllegalStateExceptionAfter5Attempts();
         var retryer = RetryerBuilder.newBuilder()
                 .retryIfRuntimeException()
                 .build();
-        assertThat(retryer.call(callable)).isTrue();
+
+        assertThatRetryer(retryer)
+                .completesSuccessfullyCalling(callable)
+                .hasResult(true);
     }
 
     @Test
@@ -247,21 +246,23 @@ class RetryerBuilderTest {
                 .withStopStrategy(StopStrategies.stopAfterAttempt(3))
                 .build();
 
-        var thrown = catchThrowable(() -> retryer.call(callable));
-        var retryException = assertIsExactType(thrown, RetryException.class);
-        assertThat(retryException).hasCauseExactlyInstanceOf(IllegalStateException.class);
-        assertThat(retryException.getNumberOfFailedAttempts()).isEqualTo(3);
-        assertThat(retryException.getLastFailedAttempt().hasResult()).isFalse();
-        assertThat(retryException.getLastFailedAttempt().hasException()).isTrue();
+        assertThatRetryer(retryer)
+                .throwsRetryExceptionCalling(callable)
+                .hasCauseExactlyInstanceOf(IllegalStateException.class)
+                .hasNumberOfFailedAttempts(3)
+                .hasExceptionOnLastAttempt();
     }
 
     @Test
-    void testRetryIfExceptionOfType_WhenSucceedsAfterMultipleAttempts() throws Exception {
+    void testRetryIfExceptionOfType_WhenSucceedsAfterMultipleAttempts() {
         Callable<Boolean> callable = noIOExceptionAfter5Attempts();
         var retryer = RetryerBuilder.newBuilder()
                 .retryIfExceptionOfType(IOException.class)
                 .build();
-        assertThat(retryer.call(callable)).isTrue();
+
+        assertThatRetryer(retryer)
+                .completesSuccessfullyCalling(callable)
+                .hasResult(true);
     }
 
     @Test
@@ -271,12 +272,11 @@ class RetryerBuilderTest {
                 .retryIfExceptionOfType(IOException.class)
                 .build();
 
-        var thrown = catchThrowable(() -> retryer.call(callable));
-        var retryException = assertIsExactType(thrown, RetryException.class);
-        assertThat(retryException).hasCauseExactlyInstanceOf(IllegalStateException.class);
-        assertThat(retryException.getNumberOfFailedAttempts()).isOne();
-        assertThat(retryException.getLastFailedAttempt().hasResult()).isFalse();
-        assertThat(retryException.getLastFailedAttempt().hasException()).isTrue();
+        assertThatRetryer(retryer)
+                .throwsRetryExceptionCalling(callable)
+                .hasCauseExactlyInstanceOf(IllegalStateException.class)
+                .hasNumberOfFailedAttempts(1)
+                .hasExceptionOnLastAttempt();
     }
 
     @Test
@@ -287,21 +287,23 @@ class RetryerBuilderTest {
                 .withStopStrategy(StopStrategies.stopAfterAttempt(3))
                 .build();
 
-        var thrown = catchThrowable(() -> retryer.call(callable));
-        var retryException = assertIsExactType(thrown, RetryException.class);
-        assertThat(retryException).hasCauseExactlyInstanceOf(IOException.class);
-        assertThat(retryException.getNumberOfFailedAttempts()).isEqualTo(3);
-        assertThat(retryException.getLastFailedAttempt().hasResult()).isFalse();
-        assertThat(retryException.getLastFailedAttempt().hasException()).isTrue();
+        assertThatRetryer(retryer)
+                .throwsRetryExceptionCalling(callable)
+                .hasCauseExactlyInstanceOf(IOException.class)
+                .hasNumberOfFailedAttempts(3)
+                .hasExceptionOnLastAttempt();
     }
 
     @Test
-    void testRetryIfExceptionWithPredicate_WhenSucceedsAfterMultipleAttempts() throws Exception {
+    void testRetryIfExceptionWithPredicate_WhenSucceedsAfterMultipleAttempts() {
         Callable<Boolean> callable = noIOExceptionAfter5Attempts();
         var retryer = RetryerBuilder.newBuilder()
                 .retryIfException(t -> t instanceof IOException)
                 .build();
-        assertThat(retryer.call(callable)).isTrue();
+
+        assertThatRetryer(retryer)
+                .completesSuccessfullyCalling(callable)
+                .hasResult(true);
     }
 
     @Test
@@ -311,12 +313,11 @@ class RetryerBuilderTest {
                 .retryIfException(t -> t instanceof IOException)
                 .build();
 
-        var thrown = catchThrowable(() -> retryer.call(callable));
-        var retryException = assertIsExactType(thrown, RetryException.class);
-        assertThat(retryException).hasCauseExactlyInstanceOf(IllegalStateException.class);
-        assertThat(retryException.getNumberOfFailedAttempts()).isOne();
-        assertThat(retryException.getLastFailedAttempt().hasResult()).isFalse();
-        assertThat(retryException.getLastFailedAttempt().hasException()).isTrue();
+        assertThatRetryer(retryer)
+                .throwsRetryExceptionCalling(callable)
+                .hasCauseExactlyInstanceOf(IllegalStateException.class)
+                .hasNumberOfFailedAttempts(1)
+                .hasExceptionOnLastAttempt();
     }
 
     @Test
@@ -327,21 +328,23 @@ class RetryerBuilderTest {
                 .withStopStrategy(StopStrategies.stopAfterAttempt(3))
                 .build();
 
-        var thrown = catchThrowable(() -> retryer.call(callable));
-        var retryException = assertIsExactType(thrown, RetryException.class);
-        assertThat(retryException).hasCauseExactlyInstanceOf(IOException.class);
-        assertThat(retryException.getNumberOfFailedAttempts()).isEqualTo(3);
-        assertThat(retryException.getLastFailedAttempt().hasResult()).isFalse();
-        assertThat(retryException.getLastFailedAttempt().hasException()).isTrue();
+        assertThatRetryer(retryer)
+                .throwsRetryExceptionCalling(callable)
+                .hasCauseExactlyInstanceOf(IOException.class)
+                .hasNumberOfFailedAttempts(3)
+                .hasExceptionOnLastAttempt();
     }
 
     @Test
-    void testRetryIfResult_WhenCompletesSuccessfully() throws Exception {
+    void testRetryIfResult_WhenCompletesSuccessfully() {
         Callable<Boolean> callable = notNullAfter5Attempts();
         var retryer = RetryerBuilder.newBuilder()
                 .retryIfResult(Objects::isNull)
                 .build();
-        assertThat(retryer.call(callable)).isTrue();
+
+        assertThatRetryer(retryer)
+                .completesSuccessfullyCalling(callable)
+                .hasResult(true);
     }
 
     @Test
@@ -352,13 +355,11 @@ class RetryerBuilderTest {
                 .withStopStrategy(StopStrategies.stopAfterAttempt(3))
                 .build();
 
-        var thrown = catchThrowable(() -> retryer.call(callable));
-        var retryException = assertIsExactType(thrown, RetryException.class);
-        assertThat(retryException).hasNoCause();
-        assertThat(retryException.getNumberOfFailedAttempts()).isEqualTo(3);
-        assertThat(retryException.getLastFailedAttempt().hasResult()).isTrue();
-        assertThat(retryException.getLastFailedAttempt().getResult()).isNull();
-        assertThat(retryException.getLastFailedAttempt().hasException()).isFalse();
+        assertThatRetryer(retryer)
+                .throwsRetryExceptionCalling(callable)
+                .hasNoCause()
+                .hasNumberOfFailedAttempts(3)
+                .hasResultOnLastAttempt(null);
     }
 
     @Test
@@ -371,12 +372,11 @@ class RetryerBuilderTest {
                 .withStopStrategy(StopStrategies.stopAfterAttempt(3))
                 .build();
 
-        var thrown = catchThrowable(() -> retryer.call(callable));
-        var retryException = assertIsExactType(thrown, RetryException.class);
-        assertThat(retryException).hasCauseExactlyInstanceOf(IllegalStateException.class);
-        assertThat(retryException.getNumberOfFailedAttempts()).isEqualTo(3);
-        assertThat(retryException.getLastFailedAttempt().hasResult()).isFalse();
-        assertThat(retryException.getLastFailedAttempt().hasException()).isTrue();
+        assertThatRetryer(retryer)
+                .throwsRetryExceptionCalling(callable)
+                .hasCauseExactlyInstanceOf(IllegalStateException.class)
+                .hasNumberOfFailedAttempts(3)
+                .hasExceptionOnLastAttempt();
     }
 
     @Test
@@ -529,6 +529,7 @@ class RetryerBuilderTest {
         assertThat(actualAttempt.getResult()).isEqualTo(expectedResult);
     }
 
+    @SuppressWarnings("SameParameterValue")
     private void assertExceptionAttempt(Attempt<?> actualAttempt, Class<?> expectedExceptionClass) {
         assertThat(actualAttempt.hasResult()).isFalse();
         assertThat(actualAttempt.hasException()).isTrue();
