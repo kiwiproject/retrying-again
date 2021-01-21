@@ -32,7 +32,8 @@
 
     <name>${project.groupId}:${project.artifactId}</name>
     <description>
-
+        A Java library to allow for the creation of configurable retrying strategies for an arbitrary function call,
+        such as something that communicates with a remote service with flaky uptime.
     </description>
     <url>https://github.com/kiwiproject/retrying-again</url>
     <inceptionYear>2020</inceptionYear>
