@@ -52,6 +52,7 @@
         <kiwi.version>0.18.0</kiwi.version>
 
         <!-- Versions for optional dependencies -->
+        <error_prone_annotations.version>2.4.0</error_prone_annotations.version>
         <jsr305.version>3.0.2</jsr305.version>
 
         <!-- Versions for test dependencies -->
@@ -66,9 +67,29 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>${guava.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.errorprone</groupId>
+                    <artifactId>error_prone_annotations</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- optional dependencies -->
+
+        <dependency>
+            <groupId>com.google.errorprone</groupId>
+            <artifactId>error_prone_annotations</artifactId>
+            <version>${error_prone_annotations.version}</version>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+            <version>${jsr305.version}</version>
+            <optional>true</optional>
+        </dependency>
 
         <!-- test dependencies -->
 
