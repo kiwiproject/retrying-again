@@ -58,6 +58,10 @@
         <!-- Versions for test dependencies -->
         <kiwi-test.version>0.13.0</kiwi-test.version>
 
+        <!-- Sonar properties -->
+        <sonar.projectKey>kiwiproject_retrying-again</sonar.projectKey>
+        <sonar.organization>kiwiproject</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
 
     <dependencies>
