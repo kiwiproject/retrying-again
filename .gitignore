@@ -1,15 +1,21 @@
-.gradle
+# Created by .ignore support plugin (hsz.mobi)
+### Maven template
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+
+# Avoid ignoring Maven wrapper jar file (.jar files are usually ignored)
+!/.mvn/wrapper/maven-wrapper.jar
+
+# IntelliJ project files
 .idea
-build
-out
 *.iml
-*.ipr
-*.iws
-fileTemplates
-gradle.properties
-.DS_Store
-classes/
-gradle/.DS_STORE
-local.properties
-.attach_pid*
-.#*
+
+# Deployment log
+maven-central-deploy.log
