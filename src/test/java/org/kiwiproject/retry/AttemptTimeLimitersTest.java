@@ -18,10 +18,10 @@ package org.kiwiproject.retry;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.google.common.collect.Sets;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
@@ -30,7 +30,7 @@ class AttemptTimeLimitersTest {
 
     @Test
     void testFixedTimeLimitWithNoExecutorReusesThreads() throws Exception {
-        Set<Long> threadsUsed = Collections.synchronizedSet(Sets.newHashSet());
+        Set<Long> threadsUsed = Collections.synchronizedSet(new HashSet<>());
         Callable<Void> callable = () -> {
             threadsUsed.add(Thread.currentThread().getId());
             return null;
