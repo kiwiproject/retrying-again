@@ -156,7 +156,7 @@ public final class Retryer {
         if (attempt.hasException()) {
             throw new RetryException(attempt);
         }
-        return attempt.get();
+        return attempt.getResult();
     }
 
     /**

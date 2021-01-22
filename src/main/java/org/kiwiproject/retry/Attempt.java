@@ -52,18 +52,6 @@ public class Attempt<T> {
     }
 
     /**
-     * Returns the result of the attempt, if any.
-     *
-     * @return the result of the attempt
-     * @throws IllegalStateException If the attempt resulted in an exception rather
-     *                               than returning a result.
-     */
-    public T get() {
-        checkState(hasResult(), "The attempt resulted in an exception, not in a result");
-        return result;
-    }
-
-    /**
      * Tells if the call returned a result or not
      *
      * @return <code>true</code> if the call returned a result, <code>false</code>
@@ -88,12 +76,13 @@ public class Attempt<T> {
     /**
      * Gets the result of the call
      *
-     * @return the result of the call
+     * @return the result of the call (may be {@code null})
      * @throws IllegalStateException if the call didn't return a result, but threw an exception,
      *                               as indicated by {@link #hasResult()}
      */
     public T getResult() {
-        return get();
+        checkState(hasResult(), "The attempt resulted in an exception, not in a result");
+        return result;
     }
 
     /**
