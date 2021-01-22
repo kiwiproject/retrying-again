@@ -19,7 +19,6 @@
 package org.kiwiproject.retry;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -34,7 +33,7 @@ public class RetryerBuilder {
     private StopStrategy stopStrategy;
     private WaitStrategy waitStrategy;
     private BlockStrategy blockStrategy;
-    private final List<Predicate<Attempt<?>>> retryPredicates = Lists.newArrayList();
+    private final List<Predicate<Attempt<?>>> retryPredicates = new ArrayList<>();
     private final List<RetryListener> listeners = new ArrayList<>();
 
     private RetryerBuilder() {

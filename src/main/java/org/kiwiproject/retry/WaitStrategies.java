@@ -19,10 +19,11 @@
 package org.kiwiproject.retry;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -226,7 +227,7 @@ public final class WaitStrategies {
      */
     public static WaitStrategy join(WaitStrategy... waitStrategies) {
         Preconditions.checkState(waitStrategies.length > 0, "Must have at least one wait strategy");
-        List<WaitStrategy> waitStrategyList = Lists.newArrayList(waitStrategies);
+        List<WaitStrategy> waitStrategyList = new ArrayList<>(Arrays.asList(waitStrategies));
         Preconditions.checkState(!waitStrategyList.contains(null), "Cannot have a null wait strategy");
         return new CompositeWaitStrategy(waitStrategyList);
     }
