@@ -20,7 +20,7 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=kiwiproject_retrying-again&metric=alert_status)](https://sonarcloud.io/dashboard?id=kiwiproject_retrying-again)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=kiwiproject_retrying-again&metric=coverage)](https://sonarcloud.io/dashboard?id=kiwiproject_retrying-again)
 [![javadoc](https://javadoc.io/badge2/org.kiwiproject/retrying-again/javadoc.svg)](https://javadoc.io/doc/org.kiwiproject/retrying-again)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Maven Central](https://img.shields.io/maven-central/v/org.kiwiproject/retrying-again)](https://search.maven.org/search?q=g:org.kiwiproject%20a:retrying-again)
 
 ## Introduction
