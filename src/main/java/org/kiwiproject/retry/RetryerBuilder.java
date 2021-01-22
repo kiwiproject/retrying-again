@@ -143,7 +143,7 @@ public class RetryerBuilder {
      * @param exceptionClass the type of the exception which should cause the retryer to retry
      * @return <code>this</code>
      */
-    public RetryerBuilder retryIfExceptionOfType(@Nonnull Class<? extends Throwable> exceptionClass) {
+    public RetryerBuilder retryIfExceptionOfType(@Nonnull Class<? extends Exception> exceptionClass) {
         Preconditions.checkNotNull(exceptionClass, "exceptionClass may not be null");
         retryPredicates.add(new ExceptionClassPredicate(exceptionClass));
         return this;
@@ -156,7 +156,7 @@ public class RetryerBuilder {
      * @param exceptionPredicate the predicate which causes a retry if satisfied
      * @return <code>this</code>
      */
-    public RetryerBuilder retryIfException(@Nonnull Predicate<Throwable> exceptionPredicate) {
+    public RetryerBuilder retryIfException(@Nonnull Predicate<Exception> exceptionPredicate) {
         Preconditions.checkNotNull(exceptionPredicate, "exceptionPredicate may not be null");
         retryPredicates.add(new ExceptionPredicate(exceptionPredicate));
         return this;
@@ -198,9 +198,9 @@ public class RetryerBuilder {
 
     private static final class ExceptionClassPredicate implements Predicate<Attempt<?>> {
 
-        private final Class<? extends Throwable> exceptionClass;
+        private final Class<? extends Exception> exceptionClass;
 
-        ExceptionClassPredicate(Class<? extends Throwable> exceptionClass) {
+        ExceptionClassPredicate(Class<? extends Exception> exceptionClass) {
             this.exceptionClass = exceptionClass;
         }
 
@@ -236,9 +236,9 @@ public class RetryerBuilder {
 
     private static final class ExceptionPredicate implements Predicate<Attempt<?>> {
 
-        private final Predicate<Throwable> delegate;
+        private final Predicate<Exception> delegate;
 
-        ExceptionPredicate(Predicate<Throwable> delegate) {
+        ExceptionPredicate(Predicate<Exception> delegate) {
             this.delegate = delegate;
         }
 

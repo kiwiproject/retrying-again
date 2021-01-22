@@ -22,7 +22,7 @@ import static com.google.common.base.Preconditions.checkState;
 
 /**
  * An attempt of a call, which resulted either in a result returned by the call,
- * or in a Throwable thrown by the call.
+ * or in an Exception thrown by the call.
  *
  * @param <T> The type returned by the wrapped callable.
  */
@@ -31,7 +31,7 @@ public class Attempt<T> {
 
     private final T result;
 
-    private final Throwable throwable;
+    private final Exception exception;
 
     private final int attemptNumber;
 
@@ -39,14 +39,14 @@ public class Attempt<T> {
 
     Attempt(T result, int attemptNumber, long delaySinceFirstAttempt) {
         this.result = result;
-        this.throwable = null;
+        this.exception = null;
         this.attemptNumber = attemptNumber;
         this.delaySinceFirstAttempt = delaySinceFirstAttempt;
     }
 
-    Attempt(Throwable throwable, int attemptNumber, long delaySinceFirstAttempt) {
+    Attempt(Exception exception, int attemptNumber, long delaySinceFirstAttempt) {
         this.result = null;
-        this.throwable = throwable;
+        this.exception = exception;
         this.attemptNumber = attemptNumber;
         this.delaySinceFirstAttempt = delaySinceFirstAttempt;
     }
@@ -60,7 +60,7 @@ public class Attempt<T> {
     public boolean hasResult() {
         // Check the exception field, because the Callable may have succeeded and returned null.
         // In that case both exception and result will be null.
-        return throwable == null;
+        return exception == null;
     }
 
     /**
@@ -70,7 +70,7 @@ public class Attempt<T> {
      * if it returned a result
      */
     public boolean hasException() {
-        return throwable != null;
+        return exception != null;
     }
 
     /**
@@ -92,9 +92,9 @@ public class Attempt<T> {
      * @throws IllegalStateException if the call didn't throw an exception,
      *                               as indicated by {@link #hasException()}
      */
-    public Throwable getException() {
+    public Exception getException() {
         checkState(hasException(), "The attempt resulted in a result, not in an exception");
-        return throwable;
+        return exception;
     }
 
     /**
