@@ -18,13 +18,10 @@
 
 package org.kiwiproject.retry;
 
-import com.google.common.annotations.Beta;
-
 /**
  * This listener provides callbacks for several events that occur when running
  * code through a {@link Retryer} instance.
  */
-@Beta
 public interface RetryListener {
 
     /**
