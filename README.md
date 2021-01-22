@@ -16,9 +16,12 @@
   limitations under the License.
 -->
 
-[![Build Status](https://travis-ci.org/rhuffman/re-retrying.svg?branch=master)](https://travis-ci.org/rhuffman/re-retrying)
-[![Latest Version](http://img.shields.io/badge/latest-3.0.0-brightgreen.svg)](https://github.com/rhuffman/re-retrying/releases/tag/v3.0.0-rc.1)
-[![License](http://img.shields.io/badge/license-apache%202-brightgreen.svg)](https://github.com/rhuffman/re-retrying/blob/master/LICENSE)
+[![Build](https://github.com/kiwiproject/retrying-again/workflows/build/badge.svg)](https://github.com/kiwiproject/retrying-again/actions?query=workflow%3Abuild)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=kiwiproject_retrying-again&metric=alert_status)](https://sonarcloud.io/dashboard?id=kiwiproject_retrying-again)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=kiwiproject_retrying-again&metric=coverage)](https://sonarcloud.io/dashboard?id=kiwiproject_retrying-again)
+[![javadoc](https://javadoc.io/badge2/org.kiwiproject/retrying-again/javadoc.svg)](https://javadoc.io/doc/org.kiwiproject/retrying-again)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Maven Central](https://img.shields.io/maven-central/v/org.kiwiproject/retrying-again)](https://search.maven.org/search?q=g:org.kiwiproject%20a:retrying-again)
 
 ## What is this?
 **2020-12-23**: This library is a fork of [re-retrying](https://github.com/rhuffman/re-retrying), which is a fork of  [guava-retrying](https://github.com/rholder/guava-retrying). We forked it because our [kiwi](https://github.com/kiwiproject/kiwi) library has used it for years (circa 2015) and for now we intend to at least keep dependency versions up to date, and perhaps make some minimal changes and/or improvements as necessary. We make no guarantees whatsoever about anything. 
