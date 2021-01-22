@@ -99,8 +99,8 @@ public final class Retryer {
                 attempt = new Attempt<>(result, attemptNumber, computeMillisSince(startTimeNanos));
             } catch (InterruptedException e) {
                 throw e;
-            } catch (Throwable t) {
-                attempt = new Attempt<>(t, attemptNumber, computeMillisSince(startTimeNanos));
+            } catch (Exception e) {
+                attempt = new Attempt<>(e, attemptNumber, computeMillisSince(startTimeNanos));
             }
 
             for (RetryListener listener : listeners) {

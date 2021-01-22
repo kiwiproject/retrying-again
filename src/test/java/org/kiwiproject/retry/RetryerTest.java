@@ -29,16 +29,53 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.SocketTimeoutException;
 import java.util.concurrent.Callable;
 import java.util.stream.Stream;
 
 class RetryerTest {
 
     @ParameterizedTest
+    @MethodSource("errors")
+    void testCallDoesNotCatchError(Class<? extends Error> errorClass) {
+        var retryer = RetryerBuilder.newBuilder()
+                .retryIfException()
+                .build();
+        var thrower = new Thrower(errorClass, 3);
+
+        assertThatThrownBy(() -> retryer.call(thrower))
+                .isExactlyInstanceOf(errorClass);
+    }
+
+    @ParameterizedTest
+    @MethodSource("errors")
+    void testRunDoesNotCatchError(Class<? extends Error> errorClass) {
+        var retryer = RetryerBuilder.newBuilder()
+                .retryIfException()
+                .build();
+        var thrower = new Thrower(errorClass, 3);
+
+        assertThatThrownBy(() -> retryer.run(thrower))
+                .isExactlyInstanceOf(errorClass);
+    }
+
+    private static Stream<Arguments> errors() {
+        return Stream.of(
+                Arguments.of(CustomError.class),
+                Arguments.of(Error.class),
+                Arguments.of(LinkageError.class),
+                Arguments.of(OutOfMemoryError.class)
+        );
+    }
+
+    private static class CustomError extends Error {
+    }
+
+    @ParameterizedTest
     @MethodSource("checkedAndUnchecked")
-    void testCallThrowsWithNoRetryOnException(Class<? extends Throwable> throwableClass) {
+    void testCallThrowsWithNoRetryOnException(Class<? extends Exception> exceptionClass) {
         var retryer = RetryerBuilder.newBuilder().build();
-        var thrower = new Thrower(throwableClass, 5);
+        var thrower = new Thrower(exceptionClass, 5);
 
         assertThatRetryer(retryer)
                 .throwsRetryExceptionCalling(thrower)
@@ -50,12 +87,12 @@ class RetryerTest {
 
     @ParameterizedTest
     @MethodSource("unchecked")
-    void testRunThrowsWithNoRetryOnException(Class<? extends Throwable> throwableClass) {
+    void testRunThrowsWithNoRetryOnException(Class<? extends Exception> exceptionClass) {
         var retryer = RetryerBuilder.newBuilder().build();
-        var thrower = new Thrower(throwableClass, 5);
+        var thrower = new Thrower(exceptionClass, 5);
 
         assertThatRetryExceptionThrownBy(() -> retryer.run(thrower))
-                .hasCauseExactlyInstanceOf(throwableClass)
+                .hasCauseExactlyInstanceOf(exceptionClass)
                 .hasNumberOfFailedAttempts(1)
                 .hasExceptionOnLastAttempt();
 
@@ -64,64 +101,64 @@ class RetryerTest {
 
     @ParameterizedTest
     @MethodSource("checkedAndUnchecked")
-    void testCallThrowsWithRetryOnException(Class<? extends Throwable> throwable) throws Exception {
+    void testCallThrowsWithRetryOnException(Class<? extends Exception> exceptionClass) throws Exception {
         var retryer = RetryerBuilder.newBuilder()
-                .retryIfExceptionOfType(Throwable.class)
+                .retryIfExceptionOfType(Exception.class)
                 .build();
-        var thrower = new Thrower(throwable, 5);
+        var thrower = new Thrower(exceptionClass, 5);
         retryer.call(thrower);
         assertThat(thrower.invocations).isEqualTo(5);
     }
 
     @ParameterizedTest
     @MethodSource("unchecked")
-    void testRunThrowsWithRetryOnException(Class<? extends Throwable> throwableClass) throws Exception {
+    void testRunThrowsWithRetryOnException(Class<? extends Exception> exceptionClass) throws Exception {
         var retryer = RetryerBuilder.newBuilder()
-                .retryIfExceptionOfType(Throwable.class)
+                .retryIfExceptionOfType(Exception.class)
                 .build();
-        var thrower = new Thrower(throwableClass, 5);
+        var thrower = new Thrower(exceptionClass, 5);
         retryer.run(thrower);
         assertThat(thrower.invocations).isEqualTo(5);
     }
 
     @ParameterizedTest
     @MethodSource("checkedAndUnchecked")
-    void testCallThrowsSubclassWithRetryOnException(Class<? extends Throwable> throwableClass) throws Exception {
+    void testCallThrowsSubclassWithRetryOnException(Class<? extends Exception> exceptionClass) throws Exception {
         @SuppressWarnings("unchecked")
-        var superclass = (Class<? extends Throwable>) throwableClass.getSuperclass();
+        var superclass = (Class<? extends Exception>) exceptionClass.getSuperclass();
         var retryer = RetryerBuilder.newBuilder()
                 .retryIfExceptionOfType(superclass)
                 .build();
-        var thrower = new Thrower(throwableClass, 5);
+        var thrower = new Thrower(exceptionClass, 5);
         retryer.call(thrower);
         assertThat(thrower.invocations).isEqualTo(5);
     }
 
     @ParameterizedTest
     @MethodSource("unchecked")
-    void testRunThrowsSubclassWithRetryOnException(Class<? extends Throwable> throwableClass) throws Exception {
+    void testRunThrowsSubclassWithRetryOnException(Class<? extends Exception> exceptionClass) throws Exception {
         @SuppressWarnings("unchecked")
-        var superclass = (Class<? extends Throwable>) throwableClass.getSuperclass();
+        var superclass = (Class<? extends Exception>) exceptionClass.getSuperclass();
         var retryer = RetryerBuilder.newBuilder()
                 .retryIfExceptionOfType(superclass)
                 .build();
-        var thrower = new Thrower(throwableClass, 5);
+        var thrower = new Thrower(exceptionClass, 5);
         retryer.run(thrower);
         assertThat(thrower.invocations).isEqualTo(5);
     }
 
     @ParameterizedTest
     @MethodSource("checkedAndUnchecked")
-    void testCallThrowsWhenRetriesAreStopped(Class<? extends Throwable> throwableClass) {
+    void testCallThrowsWhenRetriesAreStopped(Class<? extends Exception> exceptionClass) {
         var retryer = RetryerBuilder.newBuilder()
-                .retryIfExceptionOfType(throwableClass)
+                .retryIfExceptionOfType(exceptionClass)
                 .withStopStrategy(StopStrategies.stopAfterAttempt(3))
                 .build();
-        var thrower = new Thrower(throwableClass, 5);
+        var thrower = new Thrower(exceptionClass, 5);
 
         assertThatRetryer(retryer)
                 .throwsRetryExceptionCalling(thrower)
-                .hasCauseExactlyInstanceOf(throwableClass)
+                .hasCauseExactlyInstanceOf(exceptionClass)
                 .hasNumberOfFailedAttempts(3)
                 .hasExceptionOnLastAttempt();
 
@@ -130,15 +167,15 @@ class RetryerTest {
 
     @ParameterizedTest
     @MethodSource("unchecked")
-    void testRunThrowsWhenRetriesAreStopped(Class<? extends Throwable> throwableClass) {
+    void testRunThrowsWhenRetriesAreStopped(Class<? extends Exception> exceptionClass) {
         var retryer = RetryerBuilder.newBuilder()
-                .retryIfExceptionOfType(throwableClass)
+                .retryIfExceptionOfType(exceptionClass)
                 .withStopStrategy(StopStrategies.stopAfterAttempt(3))
                 .build();
-        var thrower = new Thrower(throwableClass, 5);
+        var thrower = new Thrower(exceptionClass, 5);
 
         assertThatRetryExceptionThrownBy(() -> retryer.run(thrower))
-                .hasCauseExactlyInstanceOf(throwableClass)
+                .hasCauseExactlyInstanceOf(exceptionClass)
                 .hasNumberOfFailedAttempts(3)
                 .hasExceptionOnLastAttempt();
 
@@ -205,15 +242,16 @@ class RetryerTest {
 
     private static Stream<Arguments> checkedAndUnchecked() {
         return Stream.concat(unchecked(), Stream.of(
-                Arguments.of(Exception.class),
-                Arguments.of(IOException.class)
+                Arguments.of(ClassNotFoundException.class),
+                Arguments.of(IOException.class),
+                Arguments.of(SocketTimeoutException.class)
         ));
     }
 
     private static Stream<Arguments> unchecked() {
         return Stream.of(
-                Arguments.of(Error.class),
-                Arguments.of(RuntimeException.class),
+                Arguments.of(IllegalArgumentException.class),
+                Arguments.of(IllegalStateException.class),
                 Arguments.of(NullPointerException.class)
         );
     }
@@ -278,6 +316,11 @@ class RetryerTest {
 
     }
 
+    /**
+     * @implNote The throwable type instance field uses Throwable as the wildcard bound because we
+     * need to be able test Error instances such as OutOfMemoryError in addition to Exception and
+     * RuntimeException.
+     */
     private static class Thrower implements Callable<Void>, Runnable {
 
         private final Class<? extends Throwable> throwableType;
