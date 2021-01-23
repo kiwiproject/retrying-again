@@ -22,11 +22,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.kiwiproject.retry.RetryerAssert.assertThatRetryer;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.kiwiproject.retry.Retryer.RetryerCallable;
 
 import java.io.IOException;
+import java.net.SocketException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -116,10 +116,17 @@ class RetryerBuilderTest {
     }
 
     @Test
-    @Disabled("Empty test needs to be implemented or deleted!")
     void testRetryIfNotOfExceptionType() {
-        // TODO Found this blank test. Delete it? Or try to determine what the original
-        //  author meant and implement it?
+        Callable<Boolean> callable = noIOExceptionAfter5Attempts();
+        var retryer = RetryerBuilder.newBuilder()
+                .retryIfExceptionOfType(SocketException.class)
+                .build();
+
+        assertThatRetryer(retryer)
+                .throwsRetryExceptionCalling(callable)
+                .hasCauseExactlyInstanceOf(IOException.class)
+                .hasNumberOfFailedAttempts(1)
+                .hasExceptionOnLastAttempt();
     }
 
     @Test
