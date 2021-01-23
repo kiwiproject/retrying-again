@@ -46,7 +46,7 @@ class RetryExceptionAssert {
         return this;
     }
 
-    RetryExceptionAssert hasCauseExactlyInstanceOf(Class<? extends Throwable> type) {
+    RetryExceptionAssert hasCauseExactlyInstanceOf(Class<? extends Exception> type) {
         assertThat(retryException).hasCauseExactlyInstanceOf(type);
         return this;
     }
