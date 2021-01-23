@@ -211,7 +211,7 @@ public final class WaitStrategies {
      * @param <T>            The type of exception
      * @return a wait strategy calculated from the failed attempt
      */
-    public static <T extends Throwable> WaitStrategy exceptionWait(@Nonnull Class<T> exceptionClass,
+    public static <T extends Exception> WaitStrategy exceptionWait(@Nonnull Class<T> exceptionClass,
                                                                    @Nonnull Function<T, Long> function) {
         Preconditions.checkNotNull(exceptionClass, "exceptionClass may not be null");
         Preconditions.checkNotNull(function, "function may not be null");
@@ -389,7 +389,7 @@ public final class WaitStrategies {
     }
 
     @Immutable
-    private static final class ExceptionWaitStrategy<T extends Throwable> implements WaitStrategy {
+    private static final class ExceptionWaitStrategy<T extends Exception> implements WaitStrategy {
         private final Class<T> exceptionClass;
         private final Function<T, Long> function;
 
@@ -402,7 +402,7 @@ public final class WaitStrategies {
         @Override
         public long computeSleepTime(Attempt<?> lastAttempt) {
             if (lastAttempt.hasException()) {
-                Throwable cause = lastAttempt.getException();
+                var cause = lastAttempt.getException();
                 if (exceptionClass.isAssignableFrom(cause.getClass())) {
                     return function.apply((T) cause);
                 }
