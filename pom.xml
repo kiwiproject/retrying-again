@@ -55,7 +55,7 @@
         <jsr305.version>3.0.2</jsr305.version>
 
         <!-- Versions for test dependencies -->
-        <kiwi-test.version>0.13.0</kiwi-test.version>
+        <kiwi-test.version>0.14.0</kiwi-test.version>
 
         <!-- Sonar properties -->
         <sonar.projectKey>kiwiproject_retrying-again</sonar.projectKey>
