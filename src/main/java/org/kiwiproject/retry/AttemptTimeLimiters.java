@@ -82,6 +82,8 @@ public class AttemptTimeLimiters {
         }
     }
 
+    // Suppress API warnings about TimeLimiter in Guava which has been there since version 1.0
+    @SuppressWarnings("UnstableApiUsage")
     @Immutable
     private static final class FixedAttemptTimeLimit implements AttemptTimeLimiter {
 
