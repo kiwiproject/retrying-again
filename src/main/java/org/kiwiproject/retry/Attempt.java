@@ -37,18 +37,45 @@ public class Attempt<T> {
 
     private final long delaySinceFirstAttempt;
 
-    Attempt(T result, int attemptNumber, long delaySinceFirstAttempt) {
+    private Attempt(T result, int attemptNumber, long delaySinceFirstAttempt) {
+        this(result, null, attemptNumber, delaySinceFirstAttempt);
+    }
+
+    private Attempt(Exception exception, int attemptNumber, long delaySinceFirstAttempt) {
+        this(null, exception, attemptNumber, delaySinceFirstAttempt);
+    }
+
+    private Attempt(T result, Exception exception, int attemptNumber, long delaySinceFirstAttempt) {
         this.result = result;
-        this.exception = null;
+        this.exception = exception;
         this.attemptNumber = attemptNumber;
         this.delaySinceFirstAttempt = delaySinceFirstAttempt;
     }
 
-    Attempt(Exception exception, int attemptNumber, long delaySinceFirstAttempt) {
-        this.result = null;
-        this.exception = exception;
-        this.attemptNumber = attemptNumber;
-        this.delaySinceFirstAttempt = delaySinceFirstAttempt;
+    /**
+     * Create a new {@link Attempt} that has a result.
+     *
+     * @param result                 the result of the attempt
+     * @param attemptNumber          the number of this attempt
+     * @param delaySinceFirstAttempt the delay in milliseconds since the first attempt was made
+     * @param <T>                    the type of result
+     * @return a new Attempt instance
+     */
+    static <T> Attempt<T> newResultAttempt(T result, int attemptNumber, long delaySinceFirstAttempt) {
+        return new Attempt<>(result, attemptNumber, delaySinceFirstAttempt);
+    }
+
+    /**
+     * Create a new {@link Attempt} that failed with an exception.
+     *
+     * @param exception              the exception thrown by this attempt
+     * @param attemptNumber          the number of this attempt
+     * @param delaySinceFirstAttempt the delay in milliseconds since the first attempt was made
+     * @param <T>                    the type of result the attempt would have returned if it had not thrown an exception
+     * @return a new Attempt instance
+     */
+    static <T> Attempt<T> newExceptionAttempt(Exception exception, int attemptNumber, long delaySinceFirstAttempt) {
+        return new Attempt<>(exception, attemptNumber, delaySinceFirstAttempt);
     }
 
     /**

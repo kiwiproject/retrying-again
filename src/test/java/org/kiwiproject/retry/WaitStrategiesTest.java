@@ -187,12 +187,12 @@ class WaitStrategiesTest {
         assertThat(noMatchRetryAfterWait.computeSleepTime(failedAttempt)).isZero();
 
         var retryAfterWait = WaitStrategies.exceptionWait(RetryAfterException.class, customSleepFunction());
-        var failedRetryAfterAttempt = new Attempt<Boolean>(new RetryAfterException(), 42, 7227L);
+        var failedRetryAfterAttempt = Attempt.<Boolean>newExceptionAttempt(new RetryAfterException(), 42, 7227L);
         assertThat(retryAfterWait.computeSleepTime(failedRetryAfterAttempt)).isEqualTo(RetryAfterException.SLEEP_TIME);
     }
 
     private Attempt<Boolean> failedAttempt(int attemptNumber, long delaySinceFirstAttempt) {
-        return new Attempt<>(new RuntimeException(), attemptNumber, delaySinceFirstAttempt);
+        return Attempt.newExceptionAttempt(new RuntimeException(), attemptNumber, delaySinceFirstAttempt);
     }
 
     private Function<RuntimeException, Long> zeroSleepFunction() {
