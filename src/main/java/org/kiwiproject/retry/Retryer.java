@@ -18,10 +18,9 @@
 
 package org.kiwiproject.retry;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.kiwiproject.retry.Attempt.newExceptionAttempt;
 import static org.kiwiproject.retry.Attempt.newResultAttempt;
-
-import com.google.common.base.Preconditions;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
@@ -65,12 +64,13 @@ public final class Retryer {
             @Nonnull BlockStrategy blockStrategy,
             @Nonnull List<Predicate<Attempt<?>>> retryPredicates,
             @Nonnull Collection<RetryListener> listeners) {
-        Preconditions.checkNotNull(attemptTimeLimiter, "timeLimiter may not be null");
-        Preconditions.checkNotNull(stopStrategy, "stopStrategy may not be null");
-        Preconditions.checkNotNull(waitStrategy, "waitStrategy may not be null");
-        Preconditions.checkNotNull(blockStrategy, "blockStrategy may not be null");
-        Preconditions.checkNotNull(retryPredicates, "retryPredicates may not be null");
-        Preconditions.checkNotNull(listeners, "listeners may not null");
+
+        checkNotNull(attemptTimeLimiter, "timeLimiter may not be null");
+        checkNotNull(stopStrategy, "stopStrategy may not be null");
+        checkNotNull(waitStrategy, "waitStrategy may not be null");
+        checkNotNull(blockStrategy, "blockStrategy may not be null");
+        checkNotNull(retryPredicates, "retryPredicates may not be null");
+        checkNotNull(listeners, "listeners may not null");
 
         this.attemptTimeLimiter = attemptTimeLimiter;
         this.stopStrategy = stopStrategy;
@@ -96,19 +96,9 @@ public final class Retryer {
     public <T> T call(Callable<T> callable) throws RetryException, InterruptedException {
         long startTimeNanos = System.nanoTime();
         for (int attemptNumber = 1; ; attemptNumber++) {
-            Attempt<T> attempt;
-            try {
-                T result = attemptTimeLimiter.call(callable);
-                attempt = newResultAttempt(result, attemptNumber, computeMillisSince(startTimeNanos));
-            } catch (InterruptedException e) {
-                throw e;
-            } catch (Exception e) {
-                attempt = newExceptionAttempt(e, attemptNumber, computeMillisSince(startTimeNanos));
-            }
+            var attempt = call(callable, startTimeNanos, attemptNumber);
 
-            for (RetryListener listener : listeners) {
-                listener.onRetry(attempt);
-            }
+            listeners.forEach(listener -> safeInvokeListener(listener, attempt));
 
             if (!shouldRetry(attempt)) {
                 return getOrThrow(attempt);
@@ -123,8 +113,29 @@ public final class Retryer {
         }
     }
 
+    private <T> Attempt<T> call(Callable<T> callable, long startTimeNanos, int attemptNumber)
+            throws InterruptedException {
+
+        try {
+            T result = attemptTimeLimiter.call(callable);
+            return newResultAttempt(result, attemptNumber, computeMillisSince(startTimeNanos));
+        } catch (InterruptedException e) {
+            throw e;
+        } catch (Exception e) {
+            return newExceptionAttempt(e, attemptNumber, computeMillisSince(startTimeNanos));
+        }
+    }
+
     private static long computeMillisSince(long startTimeNanos) {
         return TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTimeNanos);
+    }
+
+    private static <T> void safeInvokeListener(RetryListener listener, Attempt<T> attempt) {
+        try {
+            listener.onRetry(attempt);
+        } catch (Exception exception) {
+            // intentionally ignored per the API Note in RetryListener#onRetry
+        }
     }
 
     /**
