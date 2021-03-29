@@ -61,6 +61,6 @@ class StopStrategiesTest {
     }
 
     private Attempt<Boolean> failedAttempt(int attemptNumber, long delaySinceFirstAttempt) {
-        return new Attempt<>(new RuntimeException(), attemptNumber, delaySinceFirstAttempt);
+        return Attempt.newExceptionAttempt(new RuntimeException(), attemptNumber, delaySinceFirstAttempt);
     }
 }

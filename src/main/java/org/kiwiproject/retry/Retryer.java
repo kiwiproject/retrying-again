@@ -18,6 +18,9 @@
 
 package org.kiwiproject.retry;
 
+import static org.kiwiproject.retry.Attempt.newExceptionAttempt;
+import static org.kiwiproject.retry.Attempt.newResultAttempt;
+
 import com.google.common.base.Preconditions;
 
 import javax.annotation.Nonnull;
@@ -96,11 +99,11 @@ public final class Retryer {
             Attempt<T> attempt;
             try {
                 T result = attemptTimeLimiter.call(callable);
-                attempt = new Attempt<>(result, attemptNumber, computeMillisSince(startTimeNanos));
+                attempt = newResultAttempt(result, attemptNumber, computeMillisSince(startTimeNanos));
             } catch (InterruptedException e) {
                 throw e;
             } catch (Exception e) {
-                attempt = new Attempt<>(e, attemptNumber, computeMillisSince(startTimeNanos));
+                attempt = newExceptionAttempt(e, attemptNumber, computeMillisSince(startTimeNanos));
             }
 
             for (RetryListener listener : listeners) {
