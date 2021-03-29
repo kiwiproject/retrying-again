@@ -440,7 +440,6 @@ class RetryerBuilderTest {
         t.interrupt();
         t.join();
 
-        //noinspection ConstantConditions
         assertThat(result).isTrue();
     }
 
@@ -511,6 +510,27 @@ class RetryerBuilderTest {
         assertExceptionAttempt(attempts.get(4), IOException.class);
         assertExceptionAttempt(attempts.get(5), IOException.class);
         assertResultAttempt(attempts.get(6), true);
+    }
+
+    @Test
+    void testRetryListener_ShouldIgnoreExceptions_ThrownByListener() throws Exception {
+        var listenerCalls = new AtomicInteger();
+        RetryListener badListener = attempt -> {
+            listenerCalls.incrementAndGet();
+            throw new RuntimeException("I am not well-behaved");
+        };
+
+        Callable<Boolean> callable = noIOExceptionAfter5Attempts();
+
+        var retryer = RetryerBuilder.newBuilder()
+                .retryIfResult(Objects::isNull)
+                .retryIfException()
+                .withRetryListener(badListener)
+                .build();
+
+        assertThat(retryer.call(callable)).isTrue();
+
+        assertThat(listenerCalls).hasValue(6);
     }
 
     @Test
