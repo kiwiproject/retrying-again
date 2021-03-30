@@ -18,6 +18,9 @@
 
 package org.kiwiproject.retry;
 
+import static com.google.common.base.Preconditions.checkState;
+import static java.util.Objects.nonNull;
+
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
@@ -29,7 +32,7 @@ import javax.annotation.concurrent.Immutable;
 @Immutable
 public final class RetryException extends Exception {
 
-    private final Attempt<?> lastFailedAttempt;
+    private final transient Attempt<?> lastFailedAttempt;
 
     /**
      * If the last {@link Attempt} had an Exception, ensure it is available in
@@ -38,9 +41,11 @@ public final class RetryException extends Exception {
      * @param attempt what happened the last time we failed
      */
     RetryException(@Nonnull Attempt<?> attempt) {
-        this("Retrying failed to complete successfully after " +
-                        attempt.getAttemptNumber() + " attempts.",
-                attempt);
+        this(errorMessageFor(attempt), attempt);
+    }
+
+    private static String errorMessageFor(Attempt<?> attempt) {
+        return "Retrying failed to complete successfully after " + attempt.getAttemptNumber() + " attempts.";
     }
 
     /**
@@ -61,6 +66,7 @@ public final class RetryException extends Exception {
      * @return the number of failed attempts
      */
     public int getNumberOfFailedAttempts() {
+        checkState(nonNull(lastFailedAttempt), "lastFailedAttempt is null; cannot get attempt number");
         return lastFailedAttempt.getAttemptNumber();
     }
 
