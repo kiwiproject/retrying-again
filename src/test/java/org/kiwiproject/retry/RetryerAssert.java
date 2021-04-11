@@ -17,9 +17,8 @@
 package org.kiwiproject.retry;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.assertj.core.api.Assertions.fail;
-import static org.kiwiproject.test.assertj.KiwiAssertJ.assertIsExactType;
 
 import java.util.concurrent.Callable;
 
@@ -37,8 +36,7 @@ class RetryerAssert {
     }
 
     <T> RetryExceptionAssert throwsRetryExceptionCalling(Callable<T> callable) {
-        var thrown = catchThrowable(() -> retryer.call(callable));
-        var retryException = assertIsExactType(thrown, RetryException.class);
+        var retryException = catchThrowableOfType(() -> retryer.call(callable), RetryException.class);
         return new RetryExceptionAssert(retryException);
     }
 
