@@ -15,9 +15,9 @@ jobs:
         java_version: ['11', '16']
     steps:
       # Check out the project
-        - uses: actions/checkout@v2
-          with:
-            fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
 
       # Setup the version of Java
       - name: Set up JDK ${{ matrix.java_version }}
