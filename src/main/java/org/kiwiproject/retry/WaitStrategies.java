@@ -355,11 +355,11 @@ public final class WaitStrategies {
             if (n == 0L) return 0L;
             if (n == 1L) return 1L;
 
-            long prevPrev = 0L;
-            long prev = 1L;
-            long result = 0L;
+            var prevPrev = 0L;
+            var prev = 1L;
+            var result = 0L;
 
-            for (long i = 2L; i <= n; i++) {
+            for (var i = 2L; i <= n; i++) {
                 result = prev + prevPrev;
                 prevPrev = prev;
                 prev = result;
@@ -380,7 +380,7 @@ public final class WaitStrategies {
 
         @Override
         public long computeSleepTime(Attempt<?> failedAttempt) {
-            long waitTime = 0L;
+            var waitTime = 0L;
             for (WaitStrategy waitStrategy : waitStrategies) {
                 waitTime += waitStrategy.computeSleepTime(failedAttempt);
             }
