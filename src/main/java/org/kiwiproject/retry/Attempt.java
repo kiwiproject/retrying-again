@@ -103,7 +103,7 @@ public class Attempt<T> {
     /**
      * Gets the result of the call
      *
-     * @return the result of the call (may be {@code null})
+     * @return the result of the call (can be {@code null})
      * @throws IllegalStateException if the call didn't return a result, but threw an exception,
      *                               as indicated by {@link #hasResult()}
      */

@@ -137,8 +137,8 @@ public class RetryerBuilder {
     }
 
     /**
-     * Configures the retryer to retry if an exception of the given class (or subclass of the given class) is
-     * thrown by the call.
+     * Configures the retryer to retry if an exception is thrown by the call and the thrown exception's type
+     * is the given class (or a subclass of the given class).
      *
      * @param exceptionClass the type of the exception which should cause the retryer to retry
      * @return <code>this</code>
