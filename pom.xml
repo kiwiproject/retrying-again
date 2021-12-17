@@ -46,6 +46,8 @@
 
     <properties>
 
+        <kiwi-bom.version>0.1.0</kiwi-bom.version>
+
         <!-- Sonar properties -->
         <sonar.projectKey>kiwiproject_retrying-again</sonar.projectKey>
         <sonar.organization>kiwiproject</sonar.organization>
@@ -57,7 +59,7 @@
             <dependency>
                 <groupId>org.kiwiproject</groupId>
                 <artifactId>kiwi-bom</artifactId>
-                <version>0.1.0</version>
+                <version>${kiwi-bom.version}</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
