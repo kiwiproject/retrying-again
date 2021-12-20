@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.kiwiproject</groupId>
         <artifactId>kiwi-parent</artifactId>
-        <version>1.5.0</version>
+        <version>1.6.0</version>
     </parent>
 
     <artifactId>retrying-again</artifactId>
@@ -46,7 +46,7 @@
 
     <properties>
 
-        <kiwi-bom.version>0.2.0</kiwi-bom.version>
+        <kiwi-bom.version>0.3.0</kiwi-bom.version>
 
         <!-- Sonar properties -->
         <sonar.projectKey>kiwiproject_retrying-again</sonar.projectKey>
