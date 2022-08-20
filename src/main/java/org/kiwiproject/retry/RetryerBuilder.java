@@ -66,7 +66,7 @@ public class RetryerBuilder {
     public RetryerBuilder withWaitStrategy(@Nonnull WaitStrategy waitStrategy) {
         Preconditions.checkNotNull(waitStrategy, "waitStrategy may not be null");
         Preconditions.checkState(this.waitStrategy == null,
-                "a wait strategy has already been set %s", this.waitStrategy);
+                "a wait strategy has already been set: %s", this.waitStrategy);
         this.waitStrategy = waitStrategy;
         return this;
     }
@@ -81,7 +81,7 @@ public class RetryerBuilder {
      */
     public RetryerBuilder withStopStrategy(@Nonnull StopStrategy stopStrategy) {
         Preconditions.checkNotNull(stopStrategy, "stopStrategy may not be null");
-        Preconditions.checkState(this.stopStrategy == null, "a stop strategy has already been set %s", this.stopStrategy);
+        Preconditions.checkState(this.stopStrategy == null, "a stop strategy has already been set: %s", this.stopStrategy);
         this.stopStrategy = stopStrategy;
         return this;
     }
@@ -96,7 +96,7 @@ public class RetryerBuilder {
     public RetryerBuilder withBlockStrategy(@Nonnull BlockStrategy blockStrategy) {
         Preconditions.checkNotNull(blockStrategy, "blockStrategy may not be null");
         Preconditions.checkState(this.blockStrategy == null,
-                "a block strategy has already been set %s", this.blockStrategy);
+                "a block strategy has already been set: %s", this.blockStrategy);
         this.blockStrategy = blockStrategy;
         return this;
     }

@@ -19,7 +19,9 @@
 package org.kiwiproject.retry;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -48,6 +50,13 @@ class StopStrategiesTest {
                 .isEqualTo(expectedShouldStop);
     }
 
+    @Test
+    void testStopAfterAttempt_ShouldNotAllowNegativeAttemptNumber() {
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> StopStrategies.stopAfterAttempt(-5))
+                .withMessage("maxAttemptNumber must be >= 1 but is -5");
+    }
+
     @ParameterizedTest
     @CsvSource({
             "999, false",
@@ -58,6 +67,13 @@ class StopStrategiesTest {
         var stopStrategy = StopStrategies.stopAfterDelay(1, TimeUnit.SECONDS);
         assertThat(stopStrategy.shouldStop(failedAttempt(2, delaySinceFirstAttempt)))
                 .isEqualTo(expectedShouldStop);
+    }
+
+    @Test
+    void testStopAfterDelay_ShouldNotAllowNegativeDuration() {
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> StopStrategies.stopAfterDelay(-750, TimeUnit.MILLISECONDS))
+                .withMessage("maxDelay must be >= 0 but is -750");
     }
 
     private Attempt<Boolean> failedAttempt(int attemptNumber, long delaySinceFirstAttempt) {

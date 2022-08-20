@@ -19,6 +19,8 @@
 package org.kiwiproject.retry;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -45,6 +47,13 @@ class WaitStrategiesTest {
                 .isEqualTo(1000L);
     }
 
+    @Test
+    void testFixedWait_ShouldNotAllowNegativeSleepTime() {
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> WaitStrategies.fixedWait(-500L, TimeUnit.MILLISECONDS))
+                .withMessage("sleepTime must be >= 0 but is -500");
+    }
+
     @ParameterizedTest
     @CsvSource({
             "1, 500",
@@ -55,6 +64,13 @@ class WaitStrategiesTest {
         var incrementingWait = WaitStrategies.incrementingWait(500L, TimeUnit.MILLISECONDS, 100L, TimeUnit.MILLISECONDS);
         assertThat(incrementingWait.computeSleepTime(failedAttempt(attemptNumber, 6546L)))
                 .isEqualTo(expectedSleepTime);
+    }
+
+    @Test
+    void testIncrementingWait_ShouldNotAllowNegativeInitialSleepTime() {
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> WaitStrategies.incrementingWait(-500L, TimeUnit.MILLISECONDS, 100L, TimeUnit.MILLISECONDS))
+                .withMessage("initialSleepTime must be >= 0 but is -500");
     }
 
     @Test
@@ -81,6 +97,20 @@ class WaitStrategiesTest {
 
         assertThat(times).hasSizeGreaterThan(1);
         times.forEach(time -> assertThat(time).isBetween(0L, 2000L));
+    }
+
+    @Test
+    void testRandomWait_ShouldNotAllowNegativeMinimumTime() {
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> WaitStrategies.randomWait(-250, TimeUnit.MILLISECONDS, 1000, TimeUnit.MILLISECONDS))
+                .withMessage("minimum must be >= 0 but is -250");
+    }
+
+    @Test
+    void testRandomWait_ShouldRequireMaximumTime_ToBeHigherThanMinimumTime() {
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> WaitStrategies.randomWait(500, TimeUnit.MILLISECONDS, 499, TimeUnit.MILLISECONDS))
+                .withMessage("maximum must be > minimum but maximum is 499 and minimum is 500");
     }
 
     @ParameterizedTest
@@ -116,6 +146,34 @@ class WaitStrategiesTest {
 
         assertThat(exponentialWait.computeSleepTime(failedAttempt(attemptNumber, 0)))
                 .isEqualTo(expectedWait);
+    }
+
+    @ParameterizedTest
+    @ValueSource(longs = {-5, -1, 0})
+    void testExponentialWait_ShouldRequirePositiveMultiplier(long multiplier) {
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> WaitStrategies.exponentialWait(multiplier, 10_000, TimeUnit.MILLISECONDS))
+                .withMessage("multiplier must be > 0 but is %d", multiplier);
+    }
+
+    @ParameterizedTest
+    @ValueSource(longs = {-5000, -1000, -1})
+    void testExponentialWait_ShouldRequireZeroOrPositiveMaximumWait(long maximumWait) {
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> WaitStrategies.exponentialWait(1000, maximumWait, TimeUnit.MILLISECONDS))
+                .withMessage("maximumWait must be >= 0 but is %d", maximumWait);
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "1000, 999",
+            "500, 400",
+            "250, 249"
+    })
+    void testExponentialWait_ShouldRequireMultiplier_ToBeLessThanMaximumWait(long multiplier, long maximumWait) {
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> WaitStrategies.exponentialWait(multiplier, maximumWait, TimeUnit.MILLISECONDS))
+                .withMessage("multiplier must be < maximumWait (%d) but is %d", maximumWait, multiplier);
     }
 
     @ParameterizedTest
@@ -174,6 +232,34 @@ class WaitStrategiesTest {
                 .isEqualTo(expectedSleep);
     }
 
+    @ParameterizedTest
+    @ValueSource(longs = {-5, -1, 0})
+    void testFibonacciWait_ShouldRequirePositiveMultiplier(long multiplier) {
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> WaitStrategies.fibonacciWait(multiplier, 10_000, TimeUnit.MILLISECONDS))
+                .withMessage("multiplier must be > 0 but is %d", multiplier);
+    }
+
+    @ParameterizedTest
+    @ValueSource(longs = {-5000, -1000, -1})
+    void testFibonacciWait_ShouldRequireZeroOrPositiveMaximumWait(long maximumWait) {
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> WaitStrategies.fibonacciWait(1000, maximumWait, TimeUnit.MILLISECONDS))
+                .withMessage("maximumWait must be >= 0 but is %d", maximumWait);
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "1000, 999",
+            "500, 400",
+            "250, 249"
+    })
+    void testFibonacciWait_ShouldRequireMultiplier_ToBeLessThanMaximumWait(long multiplier, long maximumWait) {
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> WaitStrategies.fibonacciWait(multiplier, maximumWait, TimeUnit.MILLISECONDS))
+                .withMessage("multiplier must be < maximumWait (%d) but is %d", maximumWait, multiplier);
+    }
+
     @Test
     void testExceptionWait() {
         var failedAttempt = failedAttempt(42, 7227);
@@ -189,6 +275,23 @@ class WaitStrategiesTest {
         var retryAfterWait = WaitStrategies.exceptionWait(RetryAfterException.class, customSleepFunction());
         var failedRetryAfterAttempt = Attempt.<Boolean>newExceptionAttempt(new RetryAfterException(), 42, 7227L);
         assertThat(retryAfterWait.computeSleepTime(failedRetryAfterAttempt)).isEqualTo(RetryAfterException.SLEEP_TIME);
+    }
+
+    @Test
+    void testJoin_ShouldRequireAtLeastOneWaitStrategy() {
+        assertThatIllegalStateException()
+                .isThrownBy(WaitStrategies::join)
+                .withMessage("Must have at least one wait strategy");
+    }
+
+    @Test
+    void testJoin_ShouldNotPermitNullWaitStrategy() {
+        assertThatIllegalStateException()
+                .isThrownBy(() -> WaitStrategies.join(
+                        WaitStrategies.fibonacciWait(),
+                        null,
+                        WaitStrategies.fixedWait(100L, TimeUnit.MILLISECONDS)))
+                .withMessage("Cannot have a null wait strategy");
     }
 
     private Attempt<Boolean> failedAttempt(int attemptNumber, long delaySinceFirstAttempt) {
