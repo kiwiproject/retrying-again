@@ -19,6 +19,7 @@
 package org.kiwiproject.retry;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.kiwiproject.retry.RetryerAssert.assertThatRetryer;
 
@@ -50,6 +51,18 @@ class RetryerBuilderTest {
 
         assertThat(System.currentTimeMillis() - start).isGreaterThanOrEqualTo(250L);
         assertThat(result).isTrue();
+    }
+
+    @Test
+    void testWithWaitStrategy_ShouldNotAllowSettingIt_WhenOneAlreadyExists() {
+        var fixedWait = WaitStrategies.fixedWait(50L, TimeUnit.MILLISECONDS);
+        assertThatIllegalStateException()
+                .isThrownBy(() -> RetryerBuilder.newBuilder()
+                        .withWaitStrategy(fixedWait)
+                        .withWaitStrategy(WaitStrategies.fibonacciWait())
+                        .retryIfResult(Objects::isNull)
+                        .build())
+                .withMessage("a wait strategy has already been set: %s", fixedWait);
     }
 
     @Test
@@ -116,6 +129,18 @@ class RetryerBuilderTest {
     }
 
     @Test
+    void testWithStopStrategy_ShouldNotAllowSettingIt_WhenOneAlreadyExists() {
+        var stopAfterAttempt = StopStrategies.stopAfterAttempt(3);
+        assertThatIllegalStateException()
+                .isThrownBy(() -> RetryerBuilder.newBuilder()
+                        .withStopStrategy(stopAfterAttempt)
+                        .withStopStrategy(StopStrategies.neverStop())
+                        .retryIfResult(Objects::isNull)
+                        .build())
+                .withMessage("a stop strategy has already been set: %s", stopAfterAttempt);
+    }
+
+    @Test
     void testRetryIfNotOfExceptionType() {
         Callable<Boolean> callable = noIOExceptionAfter5Attempts();
         var retryer = RetryerBuilder.newBuilder()
@@ -145,6 +170,17 @@ class RetryerBuilderTest {
                 .hasResult(true);
 
         assertThat(counter).hasValue(retryCount);
+    }
+
+    @Test
+    void testWithBlockStrategy_ShouldNotAllowSettingIt_WhenOneAlreadyExists() {
+        var threadSleepStrategy = BlockStrategies.threadSleepStrategy();
+        assertThatIllegalStateException()
+                .isThrownBy(() -> RetryerBuilder.newBuilder()
+                        .withBlockStrategy(threadSleepStrategy)
+                        .withBlockStrategy(BlockStrategies.threadSleepStrategy())
+                        .build())
+                .withMessage("a block strategy has already been set: %s", threadSleepStrategy);
     }
 
     @Test
