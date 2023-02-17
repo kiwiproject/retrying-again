@@ -50,7 +50,7 @@ jobs:
 
     # Delombok before the build
     - name: Delombok
-      uses: sleberknight/delombok-action@v0.5.0
+      uses: sleberknight/delombok-action@v0.6.0
 
     - name: Autobuild
       uses: github/codeql-action/autobuild@v2
