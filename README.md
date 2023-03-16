@@ -22,7 +22,7 @@
 [![CodeQL](https://github.com/kiwiproject/retrying-again/actions/workflows/codeql.yml/badge.svg)](https://github.com/kiwiproject/retrying-again/actions/workflows/codeql.yml)
 [![javadoc](https://javadoc.io/badge2/org.kiwiproject/retrying-again/javadoc.svg)](https://javadoc.io/doc/org.kiwiproject/retrying-again)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Maven Central](https://img.shields.io/maven-central/v/org.kiwiproject/retrying-again)](https://search.maven.org/search?q=g:org.kiwiproject%20a:retrying-again)
+[![Maven Central](https://img.shields.io/maven-central/v/org.kiwiproject/retrying-again)](https://central.sonatype.com/artifact/org.kiwiproject/retrying-again/1.0.16)
 
 ## Introduction
              
