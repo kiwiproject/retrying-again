@@ -20,8 +20,8 @@ package org.kiwiproject.retry;
 
 import com.google.common.base.Preconditions;
 
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.Immutable;
+import com.google.errorprone.annotations.Immutable;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -65,7 +65,7 @@ public final class StopStrategies {
      * @param timeUnit the unit of the duration
      * @return a stop strategy which stops after {@code duration} time in the given {@code timeUnit}
      */
-    public static StopStrategy stopAfterDelay(long duration, @Nonnull TimeUnit timeUnit) {
+    public static StopStrategy stopAfterDelay(long duration, @NonNull TimeUnit timeUnit) {
         Preconditions.checkNotNull(timeUnit, "The time unit may not be null");
         return new StopAfterDelayStrategy(timeUnit.toMillis(duration));
     }

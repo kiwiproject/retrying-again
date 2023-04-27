@@ -22,7 +22,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.kiwiproject.retry.Attempt.newExceptionAttempt;
 import static org.kiwiproject.retry.Attempt.newResultAttempt;
 
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -58,12 +59,12 @@ public final class Retryer {
      *                           regard to the StopStrategy).
      * @param listeners          collection of retry listeners
      */
-    Retryer(@Nonnull AttemptTimeLimiter attemptTimeLimiter,
-            @Nonnull StopStrategy stopStrategy,
-            @Nonnull WaitStrategy waitStrategy,
-            @Nonnull BlockStrategy blockStrategy,
-            @Nonnull List<Predicate<Attempt<?>>> retryPredicates,
-            @Nonnull Collection<RetryListener> listeners) {
+    Retryer(@NonNull AttemptTimeLimiter attemptTimeLimiter,
+            @NonNull StopStrategy stopStrategy,
+            @NonNull WaitStrategy waitStrategy,
+            @NonNull BlockStrategy blockStrategy,
+            @NonNull List<Predicate<Attempt<?>>> retryPredicates,
+            @NonNull Collection<RetryListener> listeners) {
 
         checkNotNull(attemptTimeLimiter, "timeLimiter may not be null");
         checkNotNull(stopStrategy, "stopStrategy may not be null");

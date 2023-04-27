@@ -20,8 +20,9 @@ package org.kiwiproject.retry;
 
 import com.google.common.base.Preconditions;
 
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.Immutable;
+import com.google.errorprone.annotations.Immutable;
+import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -57,7 +58,7 @@ public final class WaitStrategies {
      * @return a wait strategy that sleeps a fixed amount of time
      * @throws IllegalArgumentException if the sleep time is &lt; 0
      */
-    public static WaitStrategy fixedWait(long sleepTime, @Nonnull TimeUnit timeUnit) {
+    public static WaitStrategy fixedWait(long sleepTime, @NonNull TimeUnit timeUnit) {
         Preconditions.checkNotNull(timeUnit, "The time unit may not be null");
         return new FixedWaitStrategy(timeUnit.toMillis(sleepTime));
     }
@@ -70,7 +71,7 @@ public final class WaitStrategies {
      * @return a wait strategy with a random wait time
      * @throws IllegalStateException if the maximum sleep time is &lt;= 0.
      */
-    public static WaitStrategy randomWait(long maximumTime, @Nonnull TimeUnit timeUnit) {
+    public static WaitStrategy randomWait(long maximumTime, @NonNull TimeUnit timeUnit) {
         Preconditions.checkNotNull(timeUnit, "The time unit may not be null");
         return new RandomWaitStrategy(0L, timeUnit.toMillis(maximumTime));
     }
@@ -87,9 +88,9 @@ public final class WaitStrategies {
      *                               maximum sleep time is less than (or equals to) the minimum.
      */
     public static WaitStrategy randomWait(long minimumTime,
-                                          @Nonnull TimeUnit minimumTimeUnit,
+                                          @NonNull TimeUnit minimumTimeUnit,
                                           long maximumTime,
-                                          @Nonnull TimeUnit maximumTimeUnit) {
+                                          @NonNull TimeUnit maximumTimeUnit) {
         Preconditions.checkNotNull(minimumTimeUnit, "The minimum time unit may not be null");
         Preconditions.checkNotNull(maximumTimeUnit, MAX_TIME_UNIT_MUST_BE_NON_NULL);
         return new RandomWaitStrategy(minimumTimeUnit.toMillis(minimumTime),
@@ -108,9 +109,9 @@ public final class WaitStrategies {
      * @return a wait strategy that incrementally sleeps an additional fixed time after each failed attempt
      */
     public static WaitStrategy incrementingWait(long initialSleepTime,
-                                                @Nonnull TimeUnit initialSleepTimeUnit,
+                                                @NonNull TimeUnit initialSleepTimeUnit,
                                                 long increment,
-                                                @Nonnull TimeUnit incrementTimeUnit) {
+                                                @NonNull TimeUnit incrementTimeUnit) {
         Preconditions.checkNotNull(initialSleepTimeUnit, "The initial sleep time unit may not be null");
         Preconditions.checkNotNull(incrementTimeUnit, "The increment time unit may not be null");
         return new IncrementingWaitStrategy(initialSleepTimeUnit.toMillis(initialSleepTime),
@@ -136,7 +137,7 @@ public final class WaitStrategies {
      * @return a wait strategy that increments with each failed attempt using exponential backoff
      */
     public static WaitStrategy exponentialWait(long maximumTime,
-                                               @Nonnull TimeUnit maximumTimeUnit) {
+                                               @NonNull TimeUnit maximumTimeUnit) {
         Preconditions.checkNotNull(maximumTimeUnit, MAX_TIME_UNIT_MUST_BE_NON_NULL);
         return new ExponentialWaitStrategy(1, maximumTimeUnit.toMillis(maximumTime));
     }
@@ -154,7 +155,7 @@ public final class WaitStrategies {
      */
     public static WaitStrategy exponentialWait(long multiplier,
                                                long maximumTime,
-                                               @Nonnull TimeUnit maximumTimeUnit) {
+                                               @NonNull TimeUnit maximumTimeUnit) {
         Preconditions.checkNotNull(maximumTimeUnit, MAX_TIME_UNIT_MUST_BE_NON_NULL);
         return new ExponentialWaitStrategy(multiplier, maximumTimeUnit.toMillis(maximumTime));
     }
@@ -178,7 +179,7 @@ public final class WaitStrategies {
      * @return a wait strategy that increments with each failed attempt using a Fibonacci sequence
      */
     public static WaitStrategy fibonacciWait(long maximumTime,
-                                             @Nonnull TimeUnit maximumTimeUnit) {
+                                             @NonNull TimeUnit maximumTimeUnit) {
         Preconditions.checkNotNull(maximumTimeUnit, MAX_TIME_UNIT_MUST_BE_NON_NULL);
         return new FibonacciWaitStrategy(1, maximumTimeUnit.toMillis(maximumTime));
     }
@@ -196,7 +197,7 @@ public final class WaitStrategies {
      */
     public static WaitStrategy fibonacciWait(long multiplier,
                                              long maximumTime,
-                                             @Nonnull TimeUnit maximumTimeUnit) {
+                                             @NonNull TimeUnit maximumTimeUnit) {
         Preconditions.checkNotNull(maximumTimeUnit, MAX_TIME_UNIT_MUST_BE_NON_NULL);
         return new FibonacciWaitStrategy(multiplier, maximumTimeUnit.toMillis(maximumTime));
     }
@@ -211,8 +212,8 @@ public final class WaitStrategies {
      * @param <T>            The type of exception
      * @return a wait strategy calculated from the failed attempt
      */
-    public static <T extends Exception> WaitStrategy exceptionWait(@Nonnull Class<T> exceptionClass,
-                                                                   @Nonnull Function<T, Long> function) {
+    public static <T extends Exception> WaitStrategy exceptionWait(@NonNull Class<T> exceptionClass,
+                                                                   @NonNull Function<T, Long> function) {
         Preconditions.checkNotNull(exceptionClass, "exceptionClass may not be null");
         Preconditions.checkNotNull(function, "function may not be null");
         return new ExceptionWaitStrategy<>(exceptionClass, function);
@@ -396,7 +397,7 @@ public final class WaitStrategies {
         private final Class<T> exceptionClass;
         private final Function<T, Long> function;
 
-        ExceptionWaitStrategy(@Nonnull Class<T> exceptionClass, @Nonnull Function<T, Long> function) {
+        ExceptionWaitStrategy(@NonNull Class<T> exceptionClass, @NonNull Function<T, Long> function) {
             this.exceptionClass = exceptionClass;
             this.function = function;
         }

@@ -21,8 +21,8 @@ package org.kiwiproject.retry;
 import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.nonNull;
 
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.Immutable;
+import com.google.errorprone.annotations.Immutable;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * An exception indicating that none of the attempts of the {@link Retryer}
@@ -40,7 +40,7 @@ public final class RetryException extends Exception {
      *
      * @param attempt what happened the last time we failed
      */
-    RetryException(@Nonnull Attempt<?> attempt) {
+    RetryException(@NonNull Attempt<?> attempt) {
         this(errorMessageFor(attempt), attempt);
     }
 

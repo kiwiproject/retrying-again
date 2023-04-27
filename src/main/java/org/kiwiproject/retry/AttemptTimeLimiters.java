@@ -21,9 +21,9 @@ package org.kiwiproject.retry;
 import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.SimpleTimeLimiter;
 import com.google.common.util.concurrent.TimeLimiter;
+import com.google.errorprone.annotations.Immutable;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.Immutable;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -57,7 +57,7 @@ public class AttemptTimeLimiters {
      * @param timeUnit of the 'duration' arg
      * @return an {@link AttemptTimeLimiter} with a fixed time limit for each attempt
      */
-    public static AttemptTimeLimiter fixedTimeLimit(long duration, @Nonnull TimeUnit timeUnit) {
+    public static AttemptTimeLimiter fixedTimeLimit(long duration, @NonNull TimeUnit timeUnit) {
         Preconditions.checkNotNull(timeUnit);
         return new FixedAttemptTimeLimit(duration, timeUnit);
     }
@@ -69,7 +69,7 @@ public class AttemptTimeLimiters {
      * @return an {@link AttemptTimeLimiter} with a fixed time limit for each attempt
      */
     public static AttemptTimeLimiter fixedTimeLimit(
-            long duration, @Nonnull TimeUnit timeUnit, @Nonnull ExecutorService executorService) {
+            long duration, @NonNull TimeUnit timeUnit, @NonNull ExecutorService executorService) {
         Preconditions.checkNotNull(timeUnit);
         return new FixedAttemptTimeLimit(duration, timeUnit, executorService);
     }
@@ -96,15 +96,15 @@ public class AttemptTimeLimiters {
         private final long duration;
         private final TimeUnit timeUnit;
 
-        FixedAttemptTimeLimit(long duration, @Nonnull TimeUnit timeUnit) {
+        FixedAttemptTimeLimit(long duration, @NonNull TimeUnit timeUnit) {
             this(duration, timeUnit, defaultExecutorService);
         }
 
-        FixedAttemptTimeLimit(long duration, @Nonnull TimeUnit timeUnit, @Nonnull ExecutorService executorService) {
+        FixedAttemptTimeLimit(long duration, @NonNull TimeUnit timeUnit, @NonNull ExecutorService executorService) {
             this(SimpleTimeLimiter.create(executorService), duration, timeUnit);
         }
 
-        private FixedAttemptTimeLimit(@Nonnull TimeLimiter timeLimiter, long duration, @Nonnull TimeUnit timeUnit) {
+        private FixedAttemptTimeLimit(@NonNull TimeLimiter timeLimiter, long duration, @NonNull TimeUnit timeUnit) {
             Preconditions.checkNotNull(timeLimiter);
             Preconditions.checkNotNull(timeUnit);
             this.timeLimiter = timeLimiter;

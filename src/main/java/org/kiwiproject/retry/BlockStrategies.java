@@ -18,7 +18,7 @@
 
 package org.kiwiproject.retry;
 
-import javax.annotation.concurrent.Immutable;
+import com.google.errorprone.annotations.Immutable;
 
 /**
  * Factory class for {@link BlockStrategy} instances.

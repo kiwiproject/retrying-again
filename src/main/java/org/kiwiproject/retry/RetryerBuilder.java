@@ -20,7 +20,8 @@ package org.kiwiproject.retry;
 
 import com.google.common.base.Preconditions;
 
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
@@ -49,7 +50,7 @@ public class RetryerBuilder {
      * @param listener Listener to add
      * @return <code>this</code>
      */
-    public RetryerBuilder withRetryListener(@Nonnull RetryListener listener) {
+    public RetryerBuilder withRetryListener(@NonNull RetryListener listener) {
         Preconditions.checkNotNull(listener, "listener may not be null");
         listeners.add(listener);
         return this;
@@ -63,7 +64,7 @@ public class RetryerBuilder {
      * @return <code>this</code>
      * @throws IllegalStateException if a wait strategy has already been set.
      */
-    public RetryerBuilder withWaitStrategy(@Nonnull WaitStrategy waitStrategy) {
+    public RetryerBuilder withWaitStrategy(@NonNull WaitStrategy waitStrategy) {
         Preconditions.checkNotNull(waitStrategy, "waitStrategy may not be null");
         Preconditions.checkState(this.waitStrategy == null,
                 "a wait strategy has already been set: %s", this.waitStrategy);
@@ -79,7 +80,7 @@ public class RetryerBuilder {
      * @return <code>this</code>
      * @throws IllegalStateException if a stop strategy has already been set.
      */
-    public RetryerBuilder withStopStrategy(@Nonnull StopStrategy stopStrategy) {
+    public RetryerBuilder withStopStrategy(@NonNull StopStrategy stopStrategy) {
         Preconditions.checkNotNull(stopStrategy, "stopStrategy may not be null");
         Preconditions.checkState(this.stopStrategy == null, "a stop strategy has already been set: %s", this.stopStrategy);
         this.stopStrategy = stopStrategy;
@@ -93,7 +94,7 @@ public class RetryerBuilder {
      * @return <code>this</code>
      * @throws IllegalStateException if a block strategy has already been set.
      */
-    public RetryerBuilder withBlockStrategy(@Nonnull BlockStrategy blockStrategy) {
+    public RetryerBuilder withBlockStrategy(@NonNull BlockStrategy blockStrategy) {
         Preconditions.checkNotNull(blockStrategy, "blockStrategy may not be null");
         Preconditions.checkState(this.blockStrategy == null,
                 "a block strategy has already been set: %s", this.blockStrategy);
@@ -108,7 +109,7 @@ public class RetryerBuilder {
      * @param attemptTimeLimiter to apply to each attempt
      * @return <code>this</code>
      */
-    public RetryerBuilder withAttemptTimeLimiter(@Nonnull AttemptTimeLimiter attemptTimeLimiter) {
+    public RetryerBuilder withAttemptTimeLimiter(@NonNull AttemptTimeLimiter attemptTimeLimiter) {
         Preconditions.checkNotNull(attemptTimeLimiter);
         this.attemptTimeLimiter = attemptTimeLimiter;
         return this;
@@ -143,7 +144,7 @@ public class RetryerBuilder {
      * @param exceptionClass the type of the exception which should cause the retryer to retry
      * @return <code>this</code>
      */
-    public RetryerBuilder retryIfExceptionOfType(@Nonnull Class<? extends Exception> exceptionClass) {
+    public RetryerBuilder retryIfExceptionOfType(@NonNull Class<? extends Exception> exceptionClass) {
         Preconditions.checkNotNull(exceptionClass, "exceptionClass may not be null");
         retryPredicates.add(new ExceptionClassPredicate(exceptionClass));
         return this;
@@ -156,7 +157,7 @@ public class RetryerBuilder {
      * @param exceptionPredicate the predicate which causes a retry if satisfied
      * @return <code>this</code>
      */
-    public RetryerBuilder retryIfException(@Nonnull Predicate<Exception> exceptionPredicate) {
+    public RetryerBuilder retryIfException(@NonNull Predicate<Exception> exceptionPredicate) {
         Preconditions.checkNotNull(exceptionPredicate, "exceptionPredicate may not be null");
         retryPredicates.add(new ExceptionPredicate(exceptionPredicate));
         return this;
@@ -170,7 +171,7 @@ public class RetryerBuilder {
      *                        to retry if the predicate is satisfied
      * @return <code>this</code>
      */
-    public <T> RetryerBuilder retryIfResult(@Nonnull Predicate<T> resultPredicate) {
+    public <T> RetryerBuilder retryIfResult(@NonNull Predicate<T> resultPredicate) {
         Preconditions.checkNotNull(resultPredicate, "resultPredicate may not be null");
         retryPredicates.add(new ResultPredicate<>(resultPredicate));
         return this;
