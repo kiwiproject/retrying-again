@@ -1,6 +1,8 @@
 package org.kiwiproject.retry;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.kiwiproject.retry.RetryerAssert.assertThatRetryer;
 
 import org.junit.jupiter.api.Test;

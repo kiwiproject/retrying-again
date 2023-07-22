@@ -1,6 +1,8 @@
 package org.kiwiproject.retry;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.assertj.core.api.Assertions.fail;
 
 import java.util.concurrent.Callable;
 
