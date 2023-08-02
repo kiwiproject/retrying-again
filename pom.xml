@@ -30,7 +30,7 @@
 
     <properties>
 
-        <kiwi-bom.version>1.1.0</kiwi-bom.version>
+        <kiwi-bom.version>1.1.1</kiwi-bom.version>
 
         <!-- Sonar properties -->
         <sonar.projectKey>kiwiproject_retrying-again</sonar.projectKey>
