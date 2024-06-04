@@ -1,6 +1,7 @@
 package org.kiwiproject.retry;
 
 import static com.google.common.base.Preconditions.checkState;
+import static java.util.Objects.requireNonNull;
 
 /**
  * An attempt of a call, which resulted either in a result returned by the call,
@@ -24,7 +25,12 @@ public class Attempt<T> {
     }
 
     private Attempt(Exception exception, int attemptNumber, long delaySinceFirstAttempt) {
-        this(null, exception, attemptNumber, delaySinceFirstAttempt);
+        this(
+            null,
+            requireNonNull(exception, "exception must not be null"),
+            attemptNumber,
+            delaySinceFirstAttempt
+        );
     }
 
     private Attempt(T result, Exception exception, int attemptNumber, long delaySinceFirstAttempt) {
@@ -37,7 +43,7 @@ public class Attempt<T> {
     /**
      * Create a new {@link Attempt} that has a result.
      *
-     * @param result                 the result of the attempt
+     * @param result                 the result of the attempt, may be null
      * @param attemptNumber          the number of this attempt
      * @param delaySinceFirstAttempt the delay in milliseconds since the first attempt was made
      * @param <T>                    the type of result
