@@ -56,6 +56,14 @@ public final class RetryException extends Exception {
      * Returns the last failed attempt
      *
      * @return the last failed attempt
+     * @apiNote This method returns {@code Attempt<?>} because the Java Language Specification does not
+     * permit generic subclasses of Throwable. In section
+     * <a href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-8.html#jls-8.1.2">8.1.2, Generic Classes and Type Parameters</a>,
+     * the (Java SE 17) specification states that <em>"It is a compile-time error if a generic class is a direct or
+     * indirect subclassof Throwable"</em>. It further provides the reason, stating <em>"This restriction is needed
+     * since the catch mechanism of the Java Virtual Machine works only with non-generic classes."</em> As a result,
+     * this exception class has no (good) way to capture the {@code Attempt} type parameter. Callers of this
+     * method must know the expected type and cast the returned value.
      */
     public Attempt<?> getLastFailedAttempt() {
         return lastFailedAttempt;
