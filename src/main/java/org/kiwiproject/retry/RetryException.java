@@ -1,6 +1,7 @@
 package org.kiwiproject.retry;
 
 import static com.google.common.base.Preconditions.checkState;
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 import com.google.errorprone.annotations.Immutable;
@@ -74,17 +75,25 @@ public final class RetryException extends Exception {
     }
 
     /**
-     * Returns the last failed attempt with the given {@code type}.
+     * Returns the last failed attempt with the given {@code resultType}.
+     * <p>
+     * If the attempt does not contain a result, and instead contains an Exception,
+     * then {@code resultType} is ignored.
      *
-     * @param type the type that the {@code Attempt} must contain
+     * @param resultType the type of result which the Attempt must contain
      * @param <T> the generic type of the Attempt
      * @return the last failed attempt
+     * @throws IllegalStateException if the Attempt has a result that is not an instance of {@code resultType}
      * @apiNote The type {@code T} of the {@code Attempt} must be explicitly specified
      * because the Java Language Specification does not permit generic subclasses of Throwable.
      * See the API Note in {@link #getLastFailedAttempt()} for more details.
      */
     @SuppressWarnings("unchecked")
-    public <T> Attempt<T> getLastFailedAttempt(Class<T> type) {
-        return (Attempt<T>) getLastFailedAttempt();
+    public <T> Attempt<T> getLastFailedAttempt(Class<T> resultType) {
+        Attempt<?> attempt = getLastFailedAttempt();
+        Object result = attempt.hasResult() ? attempt.getResult() : null;
+        checkState(isNull(result) || resultType.isAssignableFrom(result.getClass()),
+                "Attempt.result is not an instance of %s", resultType.getName());
+        return (Attempt<T>) attempt;
     }
 }
