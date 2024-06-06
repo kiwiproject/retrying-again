@@ -53,9 +53,11 @@ public final class RetryException extends Exception {
     }
 
     /**
-     * Returns the last failed attempt
+     * Returns the last failed attempt. The result type is unknown and must be cast.
+     * Consider using {@link #getLastFailedAttempt(Class)} to avoid the explicit cast.
      *
      * @return the last failed attempt
+     * @see #getLastFailedAttempt(Class)
      * @apiNote This method returns {@code Attempt<?>} because the Java Language Specification does not
      * permit generic subclasses of Throwable. In section
      * <a href="https://docs.oracle.com/javase/specs/jls/se17/html/jls-8.html#jls-8.1.2">8.1.2, Generic Classes and Type Parameters</a>,
@@ -63,9 +65,26 @@ public final class RetryException extends Exception {
      * indirect subclassof Throwable"</em>. It further provides the reason, stating <em>"This restriction is needed
      * since the catch mechanism of the Java Virtual Machine works only with non-generic classes."</em> As a result,
      * this exception class has no (good) way to capture the {@code Attempt} type parameter. Callers of this
-     * method must know the expected type and cast the returned value.
+     * method must know the expected type and cast the returned value. An alternative to casting is to call
+     * the {@link #getLastFailedAttempt(Class)} method, though callers must still specify the type as an
+     * explicit argument.
      */
     public Attempt<?> getLastFailedAttempt() {
         return lastFailedAttempt;
+    }
+
+    /**
+     * Returns the last failed attempt with the given {@code type}.
+     *
+     * @param type the type that the {@code Attempt} must contain
+     * @param <T> the generic type of the Attempt
+     * @return the last failed attempt
+     * @apiNote The type {@code T} of the {@code Attempt} must be explicitly specified
+     * because the Java Language Specification does not permit generic subclasses of Throwable.
+     * See the API Note in {@link #getLastFailedAttempt()} for more details.
+     */
+    @SuppressWarnings("unchecked")
+    public <T> Attempt<T> getLastFailedAttempt(Class<T> type) {
+        return (Attempt<T>) getLastFailedAttempt();
     }
 }
