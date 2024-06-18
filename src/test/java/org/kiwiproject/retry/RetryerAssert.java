@@ -20,7 +20,7 @@ class RetryerAssert {
     }
 
     <T> RetryExceptionAssert throwsRetryExceptionCalling(Callable<T> callable) {
-        var retryException = catchThrowableOfType(() -> retryer.call(callable), RetryException.class);
+        var retryException = catchThrowableOfType(RetryException.class, () -> retryer.call(callable));
         return new RetryExceptionAssert(retryException);
     }
 
