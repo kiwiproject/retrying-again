@@ -11,7 +11,7 @@ public interface RetryListener {
      * retry predicate and stop strategies are applied.
      *
      * @param attempt the current {@link Attempt}
-     * @apiNote No exceptions should be thrown from this method. But, if an exception is thrown by an
+     * @apiNote No exceptions should be thrown from this method. But if an exception is thrown by an
      * implementation, it will be silently ignored so that it does not halt processing of a {@link Retryer}.
      */
     void onRetry(Attempt<?> attempt);

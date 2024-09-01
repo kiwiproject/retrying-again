@@ -43,7 +43,7 @@ public class Attempt<T> {
     /**
      * Create a new {@link Attempt} that has a result.
      *
-     * @param result                 the result of the attempt, may be null
+     * @param result                 the result of the attempt; it may be null
      * @param attemptNumber          the number of this attempt
      * @param delaySinceFirstAttempt the delay in milliseconds since the first attempt was made
      * @param <T>                    the type of result
@@ -74,7 +74,7 @@ public class Attempt<T> {
      */
     public boolean hasResult() {
         // Check the exception field, because the Callable may have succeeded and returned null.
-        // In that case both exception and result will be null.
+        // In that case, both exception and result will be null.
         return exception == null;
     }
 

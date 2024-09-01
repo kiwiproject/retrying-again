@@ -83,7 +83,7 @@ public final class RetryException extends Exception {
      * @param resultType the type of result which the Attempt must contain
      * @param <T> the generic type of the Attempt
      * @return the last failed attempt
-     * @throws IllegalStateException if the Attempt has a result that is not an instance of {@code resultType}
+     * @throws IllegalStateException if the Attempt has a result which is not an instance of {@code resultType}
      * @apiNote The type {@code T} of the {@code Attempt} must be explicitly specified
      * because the Java Language Specification does not permit generic subclasses of Throwable.
      * See the API Note in {@link #getLastFailedAttempt()} for more details.

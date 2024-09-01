@@ -56,7 +56,7 @@ public int readAnInteger() throws IOException {
 ```
 
 The following creates a `Retryer` that will retry if the result of the method is zero, if an `IOException` is 
-thrown, or if any other `RuntimeException` is thrown from the `call()` method. It will stop after 3 unsuccessful 
+thrown, or if any other `RuntimeException` is thrown from the `call()` method. It will stop after three unsuccessful 
 attempts and throw a `RetryException` that contains information about the last failed attempt. If an `Exception`
 is thrown by the `call()` method, it can be retrieved from the `RetryException`.
 
@@ -98,7 +98,7 @@ the result or exception, and the time since the first attempt was made by a `Ret
 ## Exponential Backoff
 
 Create a `Retryer` that retries forever, waiting after every failed retry in increasing exponential backoff 
-intervals until at most 5 minutes. After 5 minutes, retry from then on in 5 minute intervals.
+intervals until at most 5 minutes. After 5 minutes, retry from then on in 5-minute intervals.
 
 ```java
 var retryer = RetryerBuilder.newBuilder()
@@ -115,7 +115,7 @@ role it played in the development of TCP/IP in [Congestion Avoidance and Control
 ## Fibonacci Backoff
 
 Create a `Retryer` that retries forever, waiting after every failed retry in increasing Fibonacci backoff
-intervals until at most 2 minutes. After 2 minutes, retry from then on in 2 minute intervals.
+intervals until at most 2 minutes. After 2 minutes, retry from then on in 2-minute intervals.
 
 ```java
 var retryer = RetryerBuilder.newBuilder()
@@ -129,11 +129,11 @@ var retryer = RetryerBuilder.newBuilder()
 Similar to the `ExponentialWaitStrategy`, the `FibonacciWaitStrategy` follows a pattern of waiting an increasing
 amount of time after each failed attempt.
 
-Instead of an exponential function it's (obviously) using a [Fibonacci sequence](https://en.wikipedia.org/wiki/Fibonacci_numbers)
+Instead of an exponential function, it's (obviously) using a [Fibonacci sequence](https://en.wikipedia.org/wiki/Fibonacci_numbers)
 to calculate the wait time.
 
 Depending on the problem at hand, the `FibonacciWaitStrategy` might perform better and lead to better throughput
-than the `ExponentialWaitStrategy` - at least according to
+than the `ExponentialWaitStrategy` - at least, according to
 [A Performance Comparison of Different Backoff Algorithms under Different Rebroadcast Probabilities for MANETs](https://www.researchgate.net/publication/255672213_A_Performance_Comparison_of_Different_Backoff_Algorithms_under_Different_Rebroadcast_Probabilities_for_MANET%27s).
 
 The implementation of `FibonacciWaitStrategy` is using an iterative version of the Fibonacci because a (naive) recursive
