@@ -36,7 +36,7 @@ public final class Retryer {
      * @param stopStrategy       the strategy used to decide when the retryer must stop retrying
      * @param waitStrategy       the strategy used to decide how much time to sleep between attempts
      * @param blockStrategy      the strategy used to decide how to block between retry attempts;
-     *                           eg, Thread#sleep(), latches, etc.
+     *                           e.g., Thread#sleep(), latches, etc.
      * @param retryPredicates    the predicates used to decide if the attempt must be retried (without
      *                           regard to the StopStrategy).
      * @param listeners          collection of retry listeners
@@ -66,7 +66,7 @@ public final class Retryer {
     /**
      * Executes the given callable, retrying if necessary. If the retry predicate
      * accepts the attempt, the stop strategy is used to decide if a new attempt
-     * must be made. Then the wait strategy is used to decide how much time to sleep
+     * must be made. Then the wait strategy is used to decide how much time to sleep,
      * and a new attempt is made.
      *
      * @param callable the callable task to be executed
@@ -124,7 +124,7 @@ public final class Retryer {
     /**
      * Executes the given runnable, retrying if necessary. If the retry predicate
      * accepts the attempt, the stop strategy is used to decide if a new attempt
-     * must be made. Then the wait strategy is used to decide how much time to sleep
+     * must be made. Then the wait strategy is used to decide how much time to sleep,
      * and a new attempt is made.
      *
      * @param runnable the runnable task to be executed
@@ -157,7 +157,7 @@ public final class Retryer {
     }
 
     /**
-     * Applies the retry predicates to the attempt, in order, until either one
+     * Applies the retry predicates to the attempt, in order, until any
      * predicate returns true or all predicates return false.
      *
      * @param attempt The attempt made by invoking the call

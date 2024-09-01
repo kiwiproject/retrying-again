@@ -55,7 +55,7 @@ public class RetryerBuilder {
 
     /**
      * Sets the stop strategy used to decide when to stop retrying. The default strategy
-     * is to not stop at all .
+     * is to not stop at all.
      *
      * @param stopStrategy the strategy used to decide when to stop retrying
      * @return <code>this</code>
@@ -97,7 +97,7 @@ public class RetryerBuilder {
     }
 
     /**
-     * Configures the retryer to retry if an exception (i.e. any <code>Exception</code> or subclass
+     * Configures the retryer to retry if an exception (i.e., any <code>Exception</code> or subclass
      * of <code>Exception</code>) is thrown by the call.
      *
      * @return <code>this</code>
@@ -108,7 +108,7 @@ public class RetryerBuilder {
     }
 
     /**
-     * Configures the retryer to retry if a runtime exception (i.e. any <code>RuntimeException</code> or subclass
+     * Configures the retryer to retry if a runtime exception (i.e., any <code>RuntimeException</code> or subclass
      * of <code>RuntimeException</code>) is thrown by the call.
      *
      * @return <code>this</code>
@@ -119,7 +119,7 @@ public class RetryerBuilder {
     }
 
     /**
-     * Configures the retryer to retry if an exception is thrown by the call and the thrown exception's type
+     * Configures the retryer to retry if the call throws an exception, and the thrown exception's type
      * is the given class (or a subclass of the given class).
      *
      * @param exceptionClass the type of the exception which should cause the retryer to retry
@@ -132,8 +132,8 @@ public class RetryerBuilder {
     }
 
     /**
-     * Configures the retryer to retry if an exception satisfying the given predicate is
-     * thrown by the call.
+     * Configures the retryer to retry if the call
+     * throws an exception satisfying the given predicate.
      *
      * @param exceptionPredicate the predicate which causes a retry if satisfied
      * @return <code>this</code>

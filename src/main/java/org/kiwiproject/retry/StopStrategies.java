@@ -43,7 +43,7 @@ public final class StopStrategies {
      * given delay amount. If it has exceeded this delay, then using this
      * strategy causes the retrying to stop.
      *
-     * @param duration the delay, starting from first attempt
+     * @param duration the delay, starting from the first attempt
      * @param timeUnit the unit of the duration
      * @return a stop strategy which stops after {@code duration} time in the given {@code timeUnit}
      */
