@@ -35,7 +35,7 @@ class AttemptTest {
             () -> assertThat(attempt.hasResult()).isTrue(),
             () -> assertThat(attempt.hasException()).isFalse(),
             () -> assertThat(attempt.getResult()).isEqualTo(result),
-            () -> assertThatIllegalStateException().isThrownBy(() -> attempt.getException()),
+            () -> assertThatIllegalStateException().isThrownBy(attempt::getException),
             () -> assertThat(attempt.getAttemptNumber()).isEqualTo(attemptNumber),
             () -> assertThat(attempt.getDelaySinceFirstAttempt()).isEqualTo(delaySinceFirstAttempt)
         );
@@ -49,7 +49,7 @@ class AttemptTest {
             () -> assertThat(attempt.hasResult()).isTrue(),
             () -> assertThat(attempt.hasException()).isFalse(),
             () -> assertThat(attempt.getResult()).isNull(),
-            () -> assertThatIllegalStateException().isThrownBy(() -> attempt.getException()),
+            () -> assertThatIllegalStateException().isThrownBy(attempt::getException),
             () -> assertThat(attempt.getAttemptNumber()).isEqualTo(attemptNumber),
             () -> assertThat(attempt.getDelaySinceFirstAttempt()).isEqualTo(delaySinceFirstAttempt)
         );
@@ -63,7 +63,7 @@ class AttemptTest {
         assertAll(
             () -> assertThat(attempt.hasResult()).isFalse(),
             () -> assertThat(attempt.hasException()).isTrue(),
-            () -> assertThatIllegalStateException().isThrownBy(() -> attempt.getResult()),
+            () -> assertThatIllegalStateException().isThrownBy(attempt::getResult),
             () -> assertThat(attempt.getException()).isSameAs(exception),
             () -> assertThat(attempt.getAttemptNumber()).isEqualTo(attemptNumber),
             () -> assertThat(attempt.getDelaySinceFirstAttempt()).isEqualTo(delaySinceFirstAttempt)
