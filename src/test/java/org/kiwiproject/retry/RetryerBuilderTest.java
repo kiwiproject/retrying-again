@@ -521,7 +521,7 @@ class RetryerBuilderTest {
 
     private static Callable<Boolean> callableReturningNullUntil5Attempts() {
         return new Callable<>() {
-            AtomicInteger count = new AtomicInteger();
+            final AtomicInteger count = new AtomicInteger();
 
             @Override
             public Boolean call() {
@@ -543,7 +543,7 @@ class RetryerBuilderTest {
 
     private static <E extends Exception> Callable<Boolean> callableThrowingExceptionUntil5Attempts(E e) {
         return new Callable<>() {
-            AtomicInteger count = new AtomicInteger();
+            final AtomicInteger count = new AtomicInteger();
 
             @Override
             public Boolean call() throws E {
@@ -557,7 +557,7 @@ class RetryerBuilderTest {
 
     private static Callable<Boolean> callableThrowingOrReturningNullUntil5Attempts() {
         return new Callable<>() {
-            AtomicInteger counter = new AtomicInteger();
+            final AtomicInteger counter = new AtomicInteger();
 
             @Override
             public Boolean call() throws IOException {
