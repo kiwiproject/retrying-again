@@ -1,4 +1,4 @@
-[![Build](https://github.com/kiwiproject/retrying-again/workflows/build/badge.svg)](https://github.com/kiwiproject/retrying-again/actions?query=workflow%3Abuild)
+[![Build](https://github.com/kiwiproject/retrying-again/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/kiwiproject/retrying-again/actions/workflows/build.yml?query=branch%3Amain)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=kiwiproject_retrying-again&metric=alert_status)](https://sonarcloud.io/dashboard?id=kiwiproject_retrying-again)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=kiwiproject_retrying-again&metric=coverage)](https://sonarcloud.io/dashboard?id=kiwiproject_retrying-again)
 [![CodeQL](https://github.com/kiwiproject/retrying-again/actions/workflows/codeql.yml/badge.svg)](https://github.com/kiwiproject/retrying-again/actions/workflows/codeql.yml)
