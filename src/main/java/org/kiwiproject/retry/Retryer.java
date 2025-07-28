@@ -4,7 +4,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.kiwiproject.retry.Attempt.newExceptionAttempt;
 import static org.kiwiproject.retry.Attempt.newResultAttempt;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Collection;
 import java.util.List;

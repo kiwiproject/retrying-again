@@ -1,7 +1,7 @@
 package org.kiwiproject.retry;
 
 import com.google.common.base.Preconditions;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
