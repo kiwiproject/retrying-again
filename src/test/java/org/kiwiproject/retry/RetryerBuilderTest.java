@@ -275,7 +275,7 @@ class RetryerBuilderTest {
     void testRetryIfExceptionWithPredicate_WhenSucceedsAfterMultipleAttempts() {
         Callable<Boolean> callable = callableThrowingIOExceptionUntil5Attempts();
         var retryer = RetryerBuilder.newBuilder()
-                .retryIfException(t -> t instanceof IOException)
+                .retryIfException(IOException.class::isInstance)
                 .build();
 
         assertThatRetryer(retryer)
@@ -287,7 +287,7 @@ class RetryerBuilderTest {
     void testRetryIfExceptionWithPredicate_WhenFailsToComplete() {
         Callable<Boolean> callable = callableThrowingIllegalStateExceptionUntil5Attempts();
         var retryer = RetryerBuilder.newBuilder()
-                .retryIfException(t -> t instanceof IOException)
+                .retryIfException(IOException.class::isInstance)
                 .build();
 
         assertThatRetryer(retryer)
@@ -301,7 +301,7 @@ class RetryerBuilderTest {
     void testRetryIfExceptionWithPredicate_WhenHasStopStrategy() {
         Callable<Boolean> callable = callableThrowingIOExceptionUntil5Attempts();
         var retryer = RetryerBuilder.newBuilder()
-                .retryIfException(t -> t instanceof IOException)
+                .retryIfException(IOException.class::isInstance)
                 .withStopStrategy(StopStrategies.stopAfterAttempt(3))
                 .build();
 
