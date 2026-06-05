@@ -34,8 +34,6 @@
 
         <!-- Sonar properties -->
         <sonar.projectKey>kiwiproject_retrying-again</sonar.projectKey>
-        <sonar.organization>kiwiproject</sonar.organization>
-        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
 
     <dependencyManagement>
